@@ -1,0 +1,424 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GenericRedBlackTree</name>
+    </assembly>
+    <members>
+        <member name="T:RedBlackTree.Interfaces.IGenericRedBlackNode`2">
+            <summary>
+            Represents an interface for a node in a Red-Black tree, which is a type of self-balancing binary search tree.
+            It maintains balance within the tree by using node colors (red and black) and enforcing specific rules.
+            </summary>
+            <typeparam name="TKey">The type of the key associated with the node.</typeparam>
+            <typeparam name="TValue">The type of the value associated with the node.</typeparam>
+        </member>
+        <member name="P:RedBlackTree.Interfaces.IGenericRedBlackNode`2.IsRed">
+            <summary>
+            Gets or sets a value indicating whether this node is red.
+            The color of a node is used to enforce certain balancing rules within the tree.
+            The color red signifies that the node has a connection with a neighboring node, 
+            and it is used to maintain balance in the tree.
+            </summary>
+        </member>
+        <member name="M:RedBlackTree.Interfaces.IGenericRedBlackNode`2.IsEmpty">
+            <summary>
+            Gets a value indicating whether this node has any values or if it's Empty.
+            This is used when determining if the node is a leaf or not.
+            </summary>
+        </member>
+        <member name="P:RedBlackTree.Interfaces.IGenericRedBlackNode`2.Parent">
+            <summary>
+            Gets or sets the parent node of the current node.
+            The parent node is the immediate ancestor of the current node in the tree structure.
+            </summary>
+        </member>
+        <member name="P:RedBlackTree.Interfaces.IGenericRedBlackNode`2.Left">
+            <summary>
+            Gets or sets the left child node of the current node.
+            The left child of a node is either a red or black node that is positioned to the left of its parent node.
+            </summary>
+        </member>
+        <member name="P:RedBlackTree.Interfaces.IGenericRedBlackNode`2.Right">
+            <summary>
+            Gets or sets the right child node of the current node.
+            The right child of a node is either a red or black node that is positioned to the right of its parent node.
+            </summary>
+        </member>
+        <member name="T:RedBlackTree.Interfaces.IGenericRedBlackTree`1">
+            <summary>
+            Represents a generic Red-Black Tree data structure that allows efficient
+            insertion, removal, and retrieval of key-value pairs with integer keys.
+            This tree maintains a sorted order of keys for quick access to values.
+            </summary>
+            <typeparam name="TValue">The type of values stored in the tree.</typeparam>
+        </member>
+        <member name="P:RedBlackTree.Interfaces.IGenericRedBlackTree`1.Index">
+            <summary>
+            Gets a read-only collection of unique keys present in the tree.
+            </summary>
+        </member>
+        <member name="P:RedBlackTree.Interfaces.IGenericRedBlackTree`1.Item(System.Int32)">
+            <summary>
+            Gets or sets the value associated with the specified key.
+            </summary>
+            <param name="key">The key to access or modify.</param>
+            <returns>The value associated with the specified key.</returns>
+        </member>
+        <member name="M:RedBlackTree.Interfaces.IGenericRedBlackTree`1.GetValue(System.Int32)">
+            <summary>
+            Retrieves the value associated with the specified key without modifying the tree.
+            </summary>
+            <param name="key">The key to retrieve the value for.</param>
+            <returns>The value associated with the specified key, if found; otherwise, the default value of TValue.</returns>
+        </member>
+        <member name="M:RedBlackTree.Interfaces.IGenericRedBlackTree`1.Insert(System.Int32,`0)">
+            <summary>
+            Inserts a key-value pair into the Red-Black Tree.
+            </summary>
+            <param name="key">The key to insert.</param>
+            <param name="value">The value associated with the key.</param>
+        </member>
+        <member name="M:RedBlackTree.Interfaces.IGenericRedBlackTree`1.Remove(System.Int32)">
+            <summary>
+            Removes the key-value pair associated with the specified key from the tree.
+            </summary>
+            <param name="key">The key to remove.</param>
+        </member>
+        <member name="M:RedBlackTree.Interfaces.IGenericRedBlackTree`1.Update(System.Int32,`0)">
+            <summary>
+            Updates the value associated with the specified key in the tree.
+            </summary>
+            <param name="key">The key to update.</param>
+            <param name="value">The new value to associate with the key.</param>
+        </member>
+        <member name="M:RedBlackTree.Interfaces.IGenericRedBlackTree`1.GetAll">
+            <summary>
+            Retrieves all key-value pairs in sorted order based on their keys.
+            </summary>
+            <returns>An enumerable collection of key-value pairs in ascending order of keys.</returns>
+        </member>
+        <member name="T:RedBlackTree.Nodes.GenericRedBlackTreeNode`1">
+            <summary>
+            Represents a node in a generic Red-Black Tree used to store key-value pairs.
+            This class supports operations for managing the node's key, value, color, and child nodes.
+            </summary>
+            <typeparam name="TValue">The type of value associated with the node.</typeparam>
+        </member>
+        <member name="P:RedBlackTree.Nodes.GenericRedBlackTreeNode`1.Key">
+            <summary>
+            An integer value used as an identifier for the KeyValuePair. 
+            Must be unique.
+            </summary>
+        </member>
+        <member name="P:RedBlackTree.Nodes.GenericRedBlackTreeNode`1.Value">
+            <summary>
+            This is the Generic Value type.
+            </summary>
+        </member>
+        <member name="M:RedBlackTree.Nodes.GenericRedBlackTreeNode`1.#ctor(System.Int32,`0)">
+            <summary>
+            Represents a node in a generic Red-Black Tree used to store key-value pairs.
+            This class supports operations for managing the node's key, value, color, and child nodes.
+            </summary>
+            <param name="key"></param>
+            <param name="value"></param>
+        </member>
+        <member name="P:RedBlackTree.Nodes.GenericRedBlackTreeNode`1.IsRed">
+            <summary>
+            Gets or sets a value indicating whether the node is red in the Red-Black Tree.
+            </summary>
+        </member>
+        <member name="M:RedBlackTree.Nodes.GenericRedBlackTreeNode`1.IsEmpty">
+            <summary>
+            Checks if the node is empty (has no key).
+            </summary>
+        </member>
+        <member name="P:RedBlackTree.Nodes.GenericRedBlackTreeNode`1.Parent">
+            <summary>
+            Gets or sets the parent node of the current node.
+            </summary>
+        </member>
+        <member name="P:RedBlackTree.Nodes.GenericRedBlackTreeNode`1.Left">
+            <summary>
+            Gets or sets the left child node of the current node.
+            </summary>
+        </member>
+        <member name="P:RedBlackTree.Nodes.GenericRedBlackTreeNode`1.Right">
+            <summary>
+            Gets or sets the right child node of the current node.
+            </summary>
+        </member>
+        <member name="M:RedBlackTree.Nodes.GenericRedBlackTreeNode`1.ResetState">
+            <summary>
+            Resets the internal state of the node to its default values, making it available for reuse.
+            </summary>
+        </member>
+        <member name="M:RedBlackTree.Nodes.GenericRedBlackTreeNode`1.Equals(System.Object)">
+            <summary>
+            Determines whether the specified object is equal to this object 
+            </summary>
+            <param name="obj">The object to compare this object with.</param>
+            <returns>true is it is equal, and false if not.</returns>
+        </member>
+        <member name="M:RedBlackTree.Nodes.GenericRedBlackTreeNode`1.GetHashCode">
+            <summary>
+            Serves as the default hash function..
+            </summary>
+            <returns>A Hash code for the current object</returns>
+        </member>
+        <member name="T:RedBlackTree.Trees.GenericRedBlackTree`1">
+            <summary>
+            This is a Red-Black Tree with a Generic value type.
+            additionally, an integer type as a key 
+            </summary>
+            <typeparam name="TValue">The Generic _value Type</typeparam>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.#ctor(System.Int32)">
+            <summary>
+            This is a Red-Black Tree with a Generic value type.
+            additionally, an integer type as a key 
+            </summary>
+            <param name="maxSize">The Maximum size this tree is allowed to grow.</param>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:RedBlackTree.Trees.GenericRedBlackTree`1"/> class.
+            </summary>
+        </member>
+        <member name="P:RedBlackTree.Trees.GenericRedBlackTree`1.Index">
+            <summary>
+            Gets the set of keys in the Red-Black Tree.
+            </summary>
+        </member>
+        <member name="P:RedBlackTree.Trees.GenericRedBlackTree`1.MaxSize">
+            <summary>
+            Gets or sets the maximum size of the tree. If set to null, there is no maximum size limit.
+            </summary>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.Contains(System.Int32)">
+            <summary>
+            Checks if the Red-Black Tree contains a specific key.
+            </summary>
+            <param name="id">The key to check for.</param>
+            <returns>True if the key is present in the tree; otherwise, false.</returns>
+        </member>
+        <member name="P:RedBlackTree.Trees.GenericRedBlackTree`1.Count">
+            <summary>
+            Gets the number of elements in the Red-Black Tree.
+            </summary>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.Insert(System.Int32,`0)">
+            <summary>
+            Inserts a new key-value pair into the Red-Black Tree.
+            </summary>
+            <param name="key">The key to insert.</param>
+            <param name="value">The value associated with the key.</param>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.InsertLeaf(RedBlackTree.Nodes.GenericRedBlackTreeNode{`0},RedBlackTree.Nodes.GenericRedBlackTreeNode{`0})">
+            <summary>
+            Inserts a new leaf node into the Red-Black Tree.
+            </summary>
+            <param name="currentNode">The current node to start the insertion from.</param>
+            <param name="newNode">The new node to insert as a leaf.</param>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.Remove(System.Int32)">
+            <summary>
+            Removes a key-value pair from the Red-Black Tree.
+            </summary>
+            <param name="key">The key to remove.</param>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.ReplaceNode(RedBlackTree.Nodes.GenericRedBlackTreeNode{`0},RedBlackTree.Nodes.GenericRedBlackTreeNode{`0})">
+            <summary>
+            Replaces a node in the Red-Black Tree with a new node, updating parent and child relationships.
+            </summary>
+            <param name="replacementNode">The node to be replaced.</param>
+            <param name="child">The replacement node.</param>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.Update(System.Int32,`0)">
+            <summary>
+            Updates the value associated with a key in the Red-Black Tree.
+            </summary>
+            <param name="key">The key to update.</param>
+            <param name="value">The new value to associate with the key.</param>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.GetValue(System.Int32)">
+            <summary>
+            Gets the value associated with a specific key in the Red-Black Tree.
+            </summary>
+            <param name="key">The key to look up.</param>
+            <returns>The value associated with the key.</returns>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.FindNodeContainingKey(RedBlackTree.Nodes.GenericRedBlackTreeNode{`0},System.Int32)">
+            <summary>
+            Finds a node in the Red-Black Tree that contains a specific key.
+            </summary>
+            <param name="currentNode">The current node to start the search from.</param>
+            <param name="key">The key to search for.</param>
+            <returns>The node containing the key, or null if not found.</returns>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.Minimum(RedBlackTree.Nodes.GenericRedBlackTreeNode{`0})">
+            <summary>
+            Finds the minimum node in a given Red-Black Tree.
+            </summary>
+            <param name="currentNode">The root node of the tree.</param>
+            <returns>The minimum node in the tree.</returns>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.Successor(RedBlackTree.Nodes.GenericRedBlackTreeNode{`0}@)">
+            <summary>
+            Finds the successor node in a given Red-Black Tree.
+            </summary>
+            <param name="currentNode">The node to find the successor for.</param>
+            <returns>The successor node of the given node.</returns>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.FixInsert(RedBlackTree.Nodes.GenericRedBlackTreeNode{`0}@)">
+            <summary>
+            Fixes the Red-Black Tree after an insert operation to maintain the properties of the tree.
+            </summary>
+            <param name="currentNode">The newly inserted node.</param>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.IsRed(RedBlackTree.Nodes.GenericRedBlackTreeNode{`0})">
+            <summary>
+            Checks if a given node is red.
+            </summary>
+            <param name="currentNode">The node to check.</param>
+            <returns>True if the node is red; otherwise, false.</returns>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.IsLeftChild(RedBlackTree.Nodes.GenericRedBlackTreeNode{`0})">
+            <summary>
+            Checks if a given node is the left child of its parent.
+            </summary>
+            <param name="currentNode">The node to check.</param>
+            <returns>True if the node is the left child; otherwise, false.</returns>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.IsRightChild(RedBlackTree.Nodes.GenericRedBlackTreeNode{`0})">
+            <summary>
+            Checks if a given node is the right child of its parent.
+            </summary>
+            <param name="currentNode">The node to check.</param>
+            <returns>True if the node is the right child; otherwise, false.</returns>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.GetLeftSibling(RedBlackTree.Nodes.GenericRedBlackTreeNode{`0})">
+            <summary>
+            Gets the left sibling of a given node.
+            </summary>
+            <param name="currentNode">The node to find the left sibling for.</param>
+            <returns>The left sibling of the node.</returns>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.GetRightSibling(RedBlackTree.Nodes.GenericRedBlackTreeNode{`0})">
+            <summary>
+            Gets the right sibling of a given node.
+            </summary>
+            <param name="currentNode">The node to find the right sibling for.</param>
+            <returns>The right sibling of the node.</returns>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.RecolorNodes(RedBlackTree.Nodes.GenericRedBlackTreeNode{`0}[])">
+            <summary>
+            Recolors the given nodes in the Red-Black Tree, toggling their color between red and black.
+            </summary>
+            <param name="nodes">The nodes to recolor.</param>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.FixRemove(RedBlackTree.Nodes.GenericRedBlackTreeNode{`0}@,RedBlackTree.Nodes.GenericRedBlackTreeNode{`0})">
+            <summary>
+            Fixes the Red-Black Tree after a remove operation to maintain the properties of the tree.
+            </summary>
+            <param name="currentNode">The node to fix.</param>
+            <param name="parent">The parent of the node.</param>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.FixRemoveForLeftChild(RedBlackTree.Nodes.GenericRedBlackTreeNode{`0}@,RedBlackTree.Nodes.GenericRedBlackTreeNode{`0})">
+            <summary>
+            Fixes the Red-Black Tree for a left child during a remove operation.
+            </summary>
+            <param name="currentNode">The node to fix.</param>
+            <param name="parent">The parent of the node.</param>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.FixRemoveCasesForLeftChild(RedBlackTree.Nodes.GenericRedBlackTreeNode{`0}@,RedBlackTree.Nodes.GenericRedBlackTreeNode{`0},RedBlackTree.Nodes.GenericRedBlackTreeNode{`0})">
+            <summary>
+            Handles various cases for a left child during a remove operation.
+            </summary>
+            <param name="currentNode">The node to fix.</param>
+            <param name="parent">The parent of the node.</param>
+            <param name="sibling">The sibling of the node.</param>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.FixRemoveForRightChild(RedBlackTree.Nodes.GenericRedBlackTreeNode{`0}@,RedBlackTree.Nodes.GenericRedBlackTreeNode{`0})">
+            <summary>
+            Fixes the Red-Black Tree for a right child during a remove operation.
+            </summary>
+            <param name="currentNode">The node to fix.</param>
+            <param name="parent">The parent of the node.</param>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.FixRemoveCasesForRightChild(RedBlackTree.Nodes.GenericRedBlackTreeNode{`0}@,RedBlackTree.Nodes.GenericRedBlackTreeNode{`0},RedBlackTree.Nodes.GenericRedBlackTreeNode{`0})">
+            <summary>
+            Handles various cases for a right child during a remove operation.
+            </summary>
+            <param name="currentNode">The node to fix.</param>
+            <param name="parent">The parent of the node.</param>
+            <param name="sibling">The sibling of the node.</param>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.IsBlack(RedBlackTree.Nodes.GenericRedBlackTreeNode{`0})">
+            <summary>
+            Checks if a given node is black.
+            </summary>
+            <param name="currentNode">The node to check.</param>
+            <returns>True if the node is black; otherwise, false.</returns>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.RotateLeft(RedBlackTree.Nodes.GenericRedBlackTreeNode{`0})">
+            <summary>
+            Rotates the tree to the left, preserving the Red-Black Tree properties.
+            </summary>
+            <param name="leftNode">The node to rotate.</param>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.RotateRight(RedBlackTree.Nodes.GenericRedBlackTreeNode{`0})">
+            <summary>
+            Rotates the tree to the right, preserving the Red-Black Tree properties.
+            </summary>
+            <param name="rightNode">The node to rotate.</param>
+        </member>
+        <member name="P:RedBlackTree.Trees.GenericRedBlackTree`1.Item(System.Int32)">
+            <summary>
+            Gets or sets the value associated with the specified key in the Red-Black Tree.
+            </summary>
+            <param name="key">The key to access or modify.</param>
+            <returns>The value associated with the key.</returns>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.GetEnumerator">
+            <summary>
+            Returns an enumerator that iterates through the elements of the Red-Black Tree in an in-order traversal.
+            </summary>
+            <returns>An enumerator that can be used to iterate through the elements of the Red-Black Tree in an in-order traversal.</returns>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.GetAll">
+            <summary>
+            Returns all elements of the Red-Black Tree.
+            </summary>
+            <returns>An enumerable of all key-value pairs.</returns>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.GetSet(System.Collections.Generic.HashSet{System.Int32})">
+            <summary>
+            Provides a way to get all items in the tree that correspond with the provided HashSet of Keys.
+            </summary>
+            <param name="set">The HasSet containing the keys to return.</param>
+            <returns>an IEnumerable collection of KeyValuePair items.</returns>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.BulkInsert(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.Int32,`0}})">
+            <summary>
+            Performs bulk insertion of key-value pairs into the Red-Black Tree.
+            </summary>
+            <param name="keyValuePairs">The key-value pairs to insert.</param>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.BuildTreeFromArray(System.Collections.Generic.KeyValuePair{System.Int32,`0}[],System.Int32,System.Int32,RedBlackTree.Nodes.GenericRedBlackTreeNode{`0})">
+            <summary>
+            Builds a Red-Black Tree from an array of key-value pairs.
+            </summary>
+            <param name="pairsArray">The array of KeyValuePairs to build the tree with.</param>
+            <param name="start">The position to start adding items from..</param>
+            <param name="end">The position to stop adding items at.</param>
+            <param name="parent">The node where the tree is merged.</param>
+            <returns>the newly formed tree at a node to add into a Tree.</returns>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.ResetState">
+            <summary>
+            Resets the state of the Red-Black Tree, effectively clearing it and resetting any configuration options.
+            </summary>
+        </member>
+    </members>
+</doc>

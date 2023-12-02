@@ -1,0 +1,66 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <ApplicationIcon>Assets\Logo.ico</ApplicationIcon>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <DocumentationFile>C:\Users\Administrator\source\repos\GenericRedBlackTree\GenericRedBlackTree\Documents\Documentation.XML</DocumentationFile>
+    <IncludeSymbols>True</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <NeutralLanguage>en</NeutralLanguage>
+    <PackageTags>Red-Black Tree, Data Structure, Generic</PackageTags>
+    <PackageReadmeFile>Documents\README.md</PackageReadmeFile>
+    <PackageIcon>Assets\Logo.png</PackageIcon>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <AnalysisLevel>6.0-recommended</AnalysisLevel>
+    <RepositoryUrl>https://github.com/MConlisk/Red-Black-Tree</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/MConlisk/Red-Black-Tree</PackageProjectUrl>
+    <Description>This is a Red-Black Tree made with the intentions of using it in Data-Oriented ECS Game Engine.. It is a Tree Data Structure that stores a Key Value Pair in which the Key is an int and the Value is Generic.</Description>
+    <Authors>Matthew Conlisk</Authors>
+    <Company>ScrewApple</Company>
+    <Title>Generic Red-Black Tree</Title>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <SignAssembly>False</SignAssembly>
+    <DelaySign>False</DelaySign>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Factories\**" />
+    <EmbeddedResource Remove="Factories\**" />
+    <None Remove="Factories\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Interfaces\IKeyedValues.cs" />
+    <Compile Remove="Interfaces\IRecyclable.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Documents\Documentation.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Documents\Documentation.XML" />
+    <Content Include="Documents\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </Content>
+    <Content Include="Assets\Logo.ico" />
+    <Content Include="Assets\Logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="GenericFactoryPool" Version="1.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Assets\Logo.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="Documents\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+</Project>
