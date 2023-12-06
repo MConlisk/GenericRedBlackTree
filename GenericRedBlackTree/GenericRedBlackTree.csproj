@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <ApplicationIcon>Assets\Logo.ico</ApplicationIcon>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <DocumentationFile>C:\Users\Administrator\source\repos\GenericRedBlackTree\GenericRedBlackTree\Documents\Documentation.XML</DocumentationFile>
+    <DocumentationFile>D:\Repos\GenericRedBlackTree\GenericRedBlackTree\Documents\Documentation.XML</DocumentationFile>
     <IncludeSymbols>True</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <NeutralLanguage>en</NeutralLanguage>
     <PackageTags>Red-Black Tree, Data Structure, Generic</PackageTags>
-    <PackageReadmeFile>Documents\README.md</PackageReadmeFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>Assets\Logo.png</PackageIcon>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <AnalysisLevel>6.0-recommended</AnalysisLevel>
@@ -22,6 +22,9 @@
     <SignAssembly>False</SignAssembly>
     <DelaySign>False</DelaySign>
     <RepositoryType>git</RepositoryType>
+    <BaseOutputPath>D:\Repos\GenericRedBlackTree\GenericRedBlackTree\bin</BaseOutputPath>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
@@ -43,7 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Documents\Documentation.XML" />
-    <Content Include="Documents\README.md">
+    <Content Include="README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </Content>
@@ -58,7 +61,11 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-    <None Update="Documents\README.md">
+    <None Update="LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>

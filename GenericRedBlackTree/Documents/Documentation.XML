@@ -116,7 +116,7 @@
             </summary>
         </member>
         <member name="M:RedBlackTree.Nodes.GenericRedBlackTreeNode`1.#ctor(System.Int32,`0)">
-            <summary>
+            <summary>e	--';P
             Represents a node in a generic Red-Black Tree used to store key-value pairs.
             This class supports operations for managing the node's key, value, color, and child nodes.
             </summary>
@@ -213,13 +213,6 @@
             </summary>
             <param name="key">The key to insert.</param>
             <param name="value">The value associated with the key.</param>
-        </member>
-        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.InsertLeaf(RedBlackTree.Nodes.GenericRedBlackTreeNode{`0},RedBlackTree.Nodes.GenericRedBlackTreeNode{`0})">
-            <summary>
-            Inserts a new leaf node into the Red-Black Tree.
-            </summary>
-            <param name="currentNode">The current node to start the insertion from.</param>
-            <param name="newNode">The new node to insert as a leaf.</param>
         </member>
         <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.Remove(System.Int32)">
             <summary>
@@ -392,11 +385,11 @@
             </summary>
             <returns>An enumerable of all key-value pairs.</returns>
         </member>
-        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.GetSet(System.Collections.Generic.HashSet{System.Int32})">
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.GetList(System.Collections.Generic.List{System.Int32})">
             <summary>
             Provides a way to get all items in the tree that correspond with the provided HashSet of Keys.
             </summary>
-            <param name="set">The HasSet containing the keys to return.</param>
+            <param name="list">The HasSet containing the keys to return.</param>
             <returns>an IEnumerable collection of KeyValuePair items.</returns>
         </member>
         <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.BulkInsert(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.Int32,`0}})">
@@ -419,6 +412,32 @@
             <summary>
             Resets the state of the Red-Black Tree, effectively clearing it and resetting any configuration options.
             </summary>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.Equals(System.Object)">
+            <summary>
+            Determines whether the specified object is equal to this object 
+            </summary>
+            <param name="obj">The object to compare this object with.</param>
+            <returns>true is it is equal, and false if not.</returns>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.GetHashCode">
+            <summary>
+            Serves as the default hash function..
+            </summary>
+            <returns>A Hash code for the current object</returns>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.ToString">
+            <summary>
+            Provides no information regarding this Tree.
+            </summary>
+            <returns>0: No Detail, 1 or less: Basic Detail, 2: Minimal Detail, 3 or more: Verbose Details. </returns>
+        </member>
+        <member name="M:RedBlackTree.Trees.GenericRedBlackTree`1.ToString(System.Int32)">
+            <summary>
+            Provides a way to get information about the Tree. Additionally, provides different levels of Detail.
+            </summary>
+            <param name="level">The level of details</param>
+            <returns>0: No Detail, 1 or less: Basic Detail, 2: Minimal Detail, 3 or more: Verbose Details. </returns>
         </member>
     </members>
 </doc>

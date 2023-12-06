@@ -22,7 +22,7 @@ public class GenericRedBlackTreeNode<TValue> : IGenericRedBlackNode<int, TValue>
 	/// </summary>
 	public TValue Value { get; set; }
 
-    /// <summary>
+    /// <summary>e	--';P
     /// Represents a node in a generic Red-Black Tree used to store key-value pairs.
     /// This class supports operations for managing the node's key, value, color, and child nodes.
     /// </summary>
@@ -64,7 +64,7 @@ public class GenericRedBlackTreeNode<TValue> : IGenericRedBlackNode<int, TValue>
 	/// </summary>
 	public void ResetState()
 	{
-		Key = default;
+		Key = 0;
 		Value = default;
 
 		IsRed = true;
