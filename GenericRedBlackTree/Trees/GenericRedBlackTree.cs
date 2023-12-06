@@ -662,9 +662,9 @@ namespace RedBlackTree.Trees
         /// <summary>
         /// Provides a way to get all items in the tree that correspond with the provided HashSet of Keys.
         /// </summary>
-        /// <param name="set">The HasSet containing the keys to return.</param>
+        /// <param name="list">The HasSet containing the keys to return.</param>
         /// <returns>an IEnumerable collection of KeyValuePair items.</returns>
-        public IEnumerable<KeyValuePair<int, TValue>> GetSet(HashSet<int> set)
+        public IEnumerable<KeyValuePair<int, TValue>> GetList(List<int> list)
 		{
 			var queue = GenericFactoryPool.Create(() => new Queue<GenericRedBlackTreeNode<TValue>>());
 			GenericFactoryPool.SetPoolResetAction<Queue<GenericRedBlackTreeNode<TValue>>>((queue) => queue.Clear());
@@ -677,7 +677,7 @@ namespace RedBlackTree.Trees
 				if (currentNode.Left != null) queue.Enqueue(currentNode.Left as GenericRedBlackTreeNode<TValue>);
 				if (currentNode.Right != null) queue.Enqueue(currentNode.Right as GenericRedBlackTreeNode<TValue>);
 
-				if (set.Remove(currentNode.Key))
+				if (list.Remove(currentNode.Key))
 				{
 					yield return new KeyValuePair<int, TValue>(currentNode.Key, currentNode.Value);
 				}

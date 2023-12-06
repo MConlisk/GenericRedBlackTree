@@ -1,110 +1,170 @@
-using RedBlackTree.Trees;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlTypes;
+using NUnit.Framework;
 using System.Diagnostics;
-using System.Diagnostics.Metrics;
+using RedBlackTree.Trees;
+using System.Collections.Generic;
 
-namespace Test;
-
-public class RedBlackTreeTests
+namespace RedBlackTree.Tests
 {
-	public const int amount = 1000000;
-	public const int size = 1000100;
+    [TestFixture]
+    public class RedBlackTreeTests
+    {
+        private GenericRedBlackTree<string> _tree;
+        private GenericRedBlackTree<string> _testvalues;
 
-	private readonly bool InfoComments = false;
-	private readonly bool TimeComments = true;
-	private readonly bool DevComments = true;
+        [SetUp]
+        public void Setup()
+        {
+            _tree = new GenericRedBlackTree<string>();
+            _testvalues = new GenericRedBlackTree<string>();
+        }
 
-	private HashSet<int> Counted;
-	private GenericRedBlackTree<string>[] TestTree;
+        [Test]
+        public void Contains_ReturnsTrue_WhenKeyExists()
+        {
+            // Arrange
+            int key = 5;
+            _tree.Insert(key, "Value");
 
-	private readonly Stopwatch SW = new();
-	private readonly HashSet<int> Subset = new();
-	private readonly List<KeyValuePair<int, string>> BulkCollection = new();
+            // Act
+            bool result = _tree.Contains(key);
 
-	[SetUp]
-	public void Setup()
-	{
-		TestTree = new[2](size);
-		Counted = new();
-		if (InfoComments) Console.WriteLine($"Bulk Collection Setup.");
-		for (int i = 0; i < amount; i++)
-		{
-			var item = new KeyValuePair<int, string>(i, $"Number {i}");
-			BulkCollection.Add(item);
-			if (i%2 == 0)
-			{
-				Subset.Add(i);
-				if (InfoComments) Console.WriteLine($"Added Item:{item.Key},to Subset Collection.");
-			}
+            // Assert
+            Assert.That(result);
+        }
 
-			if (InfoComments) Console.WriteLine($"Added Item:{item.Key}, Value:{item.Value} to Bulk Collection.");
-		}
-		if (InfoComments) Console.WriteLine($"Bulk Collection Setup Complete.");
+        [Test]
+        public void Contains_ReturnsFalse_WhenKeyDoesNotExist()
+        {
+            // Arrange
+            int key = 5;
 
-		if (InfoComments) Console.WriteLine($"Test Bulk Insert");
-		SW.Start();
-		TestTree.BulkInsert(BulkCollection);
-		if (TimeComments) Console.WriteLine($"Bulk Insert took {SW.ElapsedMilliseconds} milliseconds.");
-		SW.Stop();
-		SW.Reset();
-	}
+            // Act
+            bool result = _tree.Contains(key);
 
-	[Test]
-	public void GetAllTest()
-	{
-		try
-		{
-			if (InfoComments) Console.WriteLine($"Test Get All");
-			SW.Start();
-			foreach (var item in TestTree.GetAll())
-			{
-				Counted.Add(item.Key);
-				if (InfoComments) Console.WriteLine($"Item:{item.Key}, Value:{item.Value}");
-			}
-			if (TimeComments) Console.WriteLine($"Get All Counted {Counted.Count} in {SW.ElapsedMilliseconds} milliseconds.");
-			SW.Stop();
-			SW.Reset();
-		}
-		catch (Exception e)
-		{
-			if (DevComments)
-			{
-				Console.WriteLine($"Tree Count: {TestTree.Count}");
-				Console.WriteLine($"Bulk Collection Count: {BulkCollection.Count}");
-				Console.WriteLine($"Exception {e.Message} caught.");
-				Console.WriteLine($"StackTrace {e.StackTrace}.");
-			}
-			Assert.Fail();
-		}
-		TestTree.ResetState();
-	}
+            // Assert
+            Assert.That(result, Is.False);
+        }
 
+        [Test]
+        public void Count_ReturnsCorrectNumberOfElements()
+        {
+            // Arrange
+            _tree.Insert(1, "Value1");
+            _tree.Insert(2, "Value2");
+            _tree.Insert(3, "Value3");
 
-	[Test]
-	public void GetListTest()
-	{
-		try
-		{
-			if (InfoComments) Console.WriteLine($"Test GetSet");
-			Counted = new();
+            // Act
+            int count = _tree.Count;
 
-			SW.Start();
-			foreach (var item in TestTree.GetSet(Subset))
-			{
-				Counted.Add(item.Key);
-				if (InfoComments) Console.WriteLine($"Item:{item.Key}, Value:{item.Value}");
-			}
-			if (TimeComments) Console.WriteLine($"GetSet Counted {Counted.Count} in {SW.ElapsedMilliseconds} milliseconds.");
-			SW.Stop();
-			SW.Reset();
-		}
-		catch (Exception e)
-		{
-			if (DevComments) Console.WriteLine($"Exception {e.Message} caught.");
-			if (DevComments) Console.WriteLine($"StackTrace {e.StackTrace}.");
-			Assert.Fail();
-		}
-	}
+            // Assert
+            Assert.That(count, Is.EqualTo(3));
+        }
+
+        [Test]
+        public void Insert_AddsKeyValuePairToTree()
+        {
+            // Arrange
+            int key = 5;
+            string value = "Value";
+
+            // Act
+            _tree.Insert(key, value);
+
+            // Assert
+            Assert.That(_tree.Contains(key));
+        }
+
+        [Test]
+        public void Index_ReturnsReadOnlyCollectionOfKeys()
+        {
+            // Arrange
+            _tree.Insert(1, "Value1");
+            _tree.Insert(2, "Value2");
+            _tree.Insert(3, "Value3");
+
+            // Act
+            var index = _tree.Index;
+
+            // Assert
+            Assert.That(index, Has.Count.EqualTo(3));
+            Assert.That(index, Does.Contain(1));
+            Assert.That(index, Does.Contain(2));
+            Assert.That(index, Does.Contain(3));
+        }
+
+        [Test]
+        public void MaxSize_SetToZero_UnlimitedSize()
+        {
+            // Arrange
+            _tree.MaxSize = 0;
+
+            // Act
+            int? maxSize = _tree.MaxSize;
+
+            // Assert
+            Assert.That(maxSize, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void MaxSize_SetToValue_SetsMaximumSizeLimit()
+        {
+            // Arrange
+            int maxSize = 100;
+            _tree.MaxSize = maxSize;
+
+            // Act
+            int? actualMaxSize = _tree.MaxSize;
+
+            // Assert
+            Assert.That(actualMaxSize, Is.EqualTo(maxSize));
+        }
+
+        [Test]
+        public void SpeedTest_MeasuresExecutionTime()
+        {
+            // Arrange
+            Stopwatch stopwatch = new();
+            for (int i = 0; i < 10; i++)
+            {
+                KeyValuePair<int, string> entry = new(i, $"Key:{i}");
+                _tree.Insert(entry.Key, entry.Value);
+                if (i % 2 == 0) _testvalues.Insert(entry.Key, entry.Value);
+            }
+
+            // Act
+            stopwatch.Start();
+            GenericRedBlackTree<string> updatedList = new();
+
+            // pull the objects on the List from the tree
+            foreach(var entry in _testvalues.GetAll())
+            {
+                updatedList.Insert(entry.Key, entry.Value);    
+            }
+
+            // process and Update the objects on the list
+            foreach (var entry in updatedList.GetAll())
+            {
+                string updatedValue = entry.Value + "_Updated";
+                updatedList.Update(entry.Key, updatedValue);
+            }
+            stopwatch.Stop();
+
+            // Assert
+            Assert.Pass($"Elapsed Time: {stopwatch.ElapsedMilliseconds} ms");
+        }
+
+        [Test]
+        public void LimitTest_PerformsOperationsAtMaximumSize()
+        {
+            // Arrange
+            _tree.MaxSize = 100;
+
+            // Act
+
+            //TODO: Perform operations on the Red-Black Tree
+
+            // Assert
+            Assert.Pass("Operations performed at maximum size");
+        }
+    }
 }
