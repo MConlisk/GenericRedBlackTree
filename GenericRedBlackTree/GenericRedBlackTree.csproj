@@ -54,7 +54,7 @@
     <Content Include="Assets\Logo.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="GenericFactoryPool" Version="1.0.0" />
+    <PackageReference Include="GenericFactoryPool" Version="1.0.0.1" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Assets\Logo.png">
