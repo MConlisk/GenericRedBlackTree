@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace RedBlackTree.Interfaces;
+namespace Interfaces;
 
 /// <summary>
 /// Represents an interface for a node in a Red-Black tree, which is a type of self-balancing binary search tree.

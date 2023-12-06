@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.ObjectModel;
 using Factories.Interfaces;
 
-namespace RedBlackTree.Interfaces;
+namespace Interfaces;
 
 /// <summary>
 /// Represents a generic Red-Black Tree data structure that allows efficient

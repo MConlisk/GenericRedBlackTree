@@ -1,11 +1,8 @@
-﻿
-using RedBlackTree.Interfaces;
-using RedBlackTree.Nodes;
+﻿using Interfaces;
 
 using System;
 
-namespace RedBlackTree.Trees;
-
+namespace Trees;
 
 public sealed partial class GenericRedBlackTree<TValue>
 {
@@ -88,7 +85,7 @@ public sealed partial class GenericRedBlackTree<TValue>
 			if (obj == null || GetType() != obj.GetType())
 				return false;
 
-			var other = (GenericRedBlackTreeNode<TValue>)obj;
+			var other = (GenericRedBlackTreeNode)obj;
 			return Key.Equals(other.Key) && Value.Equals(other.Value);
 		}
 

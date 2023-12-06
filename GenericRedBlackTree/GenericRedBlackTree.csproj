@@ -40,6 +40,7 @@
   <ItemGroup>
     <Compile Remove="Interfaces\IKeyedValues.cs" />
     <Compile Remove="Interfaces\IRecyclable.cs" />
+    <Compile Remove="Nodes\GenericRedBlackTreeNode.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Documents\Documentation.XML" />
