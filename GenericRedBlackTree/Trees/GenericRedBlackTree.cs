@@ -13,12 +13,14 @@ using System.Linq;
 using System.Text;
 
 namespace RedBlackTree.Trees;
+
+
 /// <summary>
 /// This is a Red-Black Tree with a Generic value type.
 /// additionally, an integer type as a key 
 /// </summary>
 /// <typeparam name="TValue">The Generic _value Type</typeparam>
-public sealed class GenericRedBlackTree<TValue> : IGenericRedBlackTree<TValue>
+public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<TValue>
 {
 	private int _maxSize;
 	private GenericRedBlackTreeNode<TValue> _root;
@@ -417,69 +419,6 @@ public sealed class GenericRedBlackTree<TValue> : IGenericRedBlackTree<TValue>
 	}
 
 	/// <summary>
-	/// Fixes the Red-Black Tree after an insert operation to maintain the properties of the tree.
-	/// </summary>
-	/// <param name="currentNode">The newly inserted node.</param>
-	private void FixInsert(ref GenericRedBlackTreeNode<TValue> currentNode)
-	{
-		ArgumentNullException.ThrowIfNull(currentNode);
-
-		while (IsRed(currentNode.Parent as GenericRedBlackTreeNode<TValue>) && IsRed(currentNode.Parent.Parent as GenericRedBlackTreeNode<TValue>))
-		{
-			if (IsLeftChild(currentNode.Parent as GenericRedBlackTreeNode<TValue>))
-			{
-				var uncle = GetRightSibling(currentNode.Parent.Parent as GenericRedBlackTreeNode<TValue>);
-
-				if (IsRed(uncle))
-				{
-					// Case 1: Recoloring
-					RecolorNodes(currentNode.Parent as GenericRedBlackTreeNode<TValue>, uncle, currentNode.Parent.Parent as GenericRedBlackTreeNode<TValue>);
-					currentNode = currentNode.Parent.Parent as GenericRedBlackTreeNode<TValue>;
-				}
-				else
-				{
-					if (IsRightChild(currentNode))
-					{
-						// Case 2: Left rotation
-						currentNode = currentNode.Parent as GenericRedBlackTreeNode<TValue>;
-						RotateLeft(currentNode);
-					}
-
-					// Case 3: Right rotation
-					RecolorNodes(currentNode.Parent as GenericRedBlackTreeNode<TValue>, currentNode.Parent.Parent as GenericRedBlackTreeNode<TValue>);
-					RotateRight(currentNode.Parent.Parent as GenericRedBlackTreeNode<TValue>);
-				}
-			}
-			else
-			{
-				var uncle = GetLeftSibling(currentNode.Parent.Parent as GenericRedBlackTreeNode<TValue>);
-
-				if (IsRed(uncle))
-				{
-					// Case 1: Recoloring
-					RecolorNodes(currentNode.Parent as GenericRedBlackTreeNode<TValue>, uncle, currentNode.Parent.Parent as GenericRedBlackTreeNode<TValue>);
-					currentNode = currentNode.Parent.Parent as GenericRedBlackTreeNode<TValue>;
-				}
-				else
-				{
-					if (IsLeftChild(currentNode))
-					{
-						// Case 2: Right rotation
-						currentNode = currentNode.Parent as GenericRedBlackTreeNode<TValue>;
-						RotateRight(currentNode);
-					}
-
-					// Case 3: Left rotation
-					RecolorNodes(currentNode.Parent as GenericRedBlackTreeNode<TValue>, currentNode.Parent.Parent as GenericRedBlackTreeNode<TValue>);
-					RotateLeft(currentNode.Parent.Parent as GenericRedBlackTreeNode<TValue>);
-				}
-			}
-		}
-
-		_root.IsRed = false;
-	}
-
-	/// <summary>
 	/// Checks if a given node is red.
 	/// </summary>
 	/// <param name="currentNode">The node to check.</param>
@@ -837,7 +776,7 @@ public sealed class GenericRedBlackTree<TValue> : IGenericRedBlackTree<TValue>
 		_root = BuildTreeFromArray(pairsArray, 0, pairsArray.Length - 1, null);
 
 		// Rebalance the tree after bulk insertion
-		FixInsert(ref _root);
+		InsertRebalance(_root);
 	}
 
 	/// <summary>
@@ -906,47 +845,23 @@ public sealed class GenericRedBlackTree<TValue> : IGenericRedBlackTree<TValue>
 	}
 
 	/// <summary>
-	/// Provides no information regarding this Tree.
+	/// Provides information about this tree;
 	/// </summary>
-	/// <returns>0: No Detail, 1 or less: Basic Detail, 2: Minimal Detail, 3 or more: Verbose Details. </returns>
-	public override string ToString() => ToString(0);
+	/// <returns>A CSV string containing details about the tree. </returns>
+	public override string ToString() 
+	{
+		return $"HashCode:{GetHashCode}, Count:{Count}, Max Capacity:{MaxSize} ";
+	}
 
 	/// <summary>
-	/// Provides a way to get information about the Tree. Additionally, provides different levels of Detail.
+	/// Provides a way to get information about a specified node.
 	/// </summary>
-	/// <param name="level">The level of details</param>
-	/// <returns>0: No Detail, 1 or less: Basic Detail, 2: Minimal Detail, 3 or more: Verbose Details. </returns>
-	public string ToString(int level)
+	/// <param name="key">The Key for which node to return information from. </param>
+	/// <returns>Information from the node specified by its Key. </returns>
+	public string ToString(int key)
 	{
-		List<char> result = new();
-		result.AddRange(nameof(GenericRedBlackTree<TValue>) + $"\r\n");
-
-		if (level <= 0)
-		{
-			return "No Details";
-		}
-
-		if (level >= 1)
-		{
-			result.AddRange($"Max Size set to {_maxSize} : Root node {(_root == null ? "Is Null" : "Is Not Null")}," + $"\r\n");
-		}
-
-		if (level >= 2)
-		{
-			result.AddRange($"HashCode: {GetHashCode()},");
-		}
-
-		if (level >= 3)
-		{
-			result.AddRange($"Contains {_index.Count} KeyValuePairs. Indexes" + $"\r\n");
-
-			foreach (var item in _index)
-			{
-				result.AddRange($"Key:{item}, Value:{GetValue(item)}" + $"\r\n");
-			}
-		}
-
-		return result.ToString();
+		return FindNodeContainingKey(_root, key).ToString();
 	}
+
 }
 

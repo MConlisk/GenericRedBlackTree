@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections;
 using System.Collections.ObjectModel;
-using GenericFactoryPool.Interfaces;
+using Factories.Interfaces;
 
 namespace RedBlackTree.Interfaces;
 

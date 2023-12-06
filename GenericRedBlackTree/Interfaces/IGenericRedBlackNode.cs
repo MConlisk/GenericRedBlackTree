@@ -1,4 +1,4 @@
-﻿using GenericFactoryPool.Interfaces;
+﻿using Factories.Interfaces;
 
 using System;
 using System.Collections.Generic;
