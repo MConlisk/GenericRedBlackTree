@@ -160,7 +160,7 @@ public class Tree<TKey, TValue> where TKey : IComparable<TKey>
 			var newNode = _nodeFactory();
 			newNode.Key = keyValuePair.Key;
 			newNode.Value = keyValuePair.Value;
-			newNode.SubNodes = new Dictionary<string, ITreeNode<TKey, TValue>>(_nodeType.SubNodesCapacity)
+			newNode.SubNodes = new Dictionary<string, ITreeNode<TKey, TValue>>(_nodeType.SubNodesCapacity);
 
 			_root.AddSubNode(newNode);
 
@@ -290,13 +290,13 @@ public class InOrderTraversalComponent<TKey, TValue> : ITreeObserver<TKey, TValu
 	}
 
 	// Recursive method for In-Order Traversal
-	private void InOrderTraversal(TreeNode<TKey, TValue> node)
+	private void InOrderTraversal(ITreeNode<TKey, TValue> node)
 	{
 		if (node != null)
 		{
-			InOrderTraversal(node.SubNodes[0]); // Left subtree
+			InOrderTraversal(node.SubNodes["Left"]); // Left subtree
 			Console.WriteLine($"Node: Key={node.Key}, Value={node.Value}");
-			InOrderTraversal(node.SubNodes[1]); // Right subtree
+			InOrderTraversal(node.SubNodes["Right"]); // Right subtree
 		}
 	}
 }
