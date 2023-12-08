@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GenericRedBlackTree\GenericRedBlackTree.csproj" />
+    <ProjectReference Include="..\GenericRedBlackTree\DataStructures.csproj" />
   </ItemGroup>
 
 </Project>

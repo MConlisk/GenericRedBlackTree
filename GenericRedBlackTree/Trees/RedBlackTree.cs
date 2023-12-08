@@ -1,6 +1,6 @@
-﻿using Factories;
+﻿using DataStructures.Interfaces;
 
-using Interfaces;
+using Factories;
 
 using System;
 using System.Collections.Concurrent;
@@ -9,47 +9,47 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 
-namespace Trees;
+namespace DataStructures.Trees;
 
 /// <summary>
-/// This is a Red-Black Tree with a Generic value type.
-/// additionally, an integer type as a key 
+/// This is a Red-Black Tree with a Generic |||_value type.
+/// additionally, an integer type as a _key 
 /// </summary>
 /// <typeparam name="TValue">The Generic _value Type</typeparam>
-public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<TValue>
+public sealed partial class RedBlackTree<TValue> : IRedBlackTree<int, TValue>
 {
-	private int _maxSize;
-	private GenericRedBlackTreeNode _root;
+	private int _maxCapacity;
+	private RedBlackNode _root;
 	private HashSet<int> _index = PoolFactory.Create(() => new HashSet<int>());
 
 	/// <summary>
-	/// This is a Red-Black Tree with a Generic value type.
-	/// additionally, an integer type as a key 
+	/// This is a Red-Black Tree with a Generic |||_value type.
+	/// additionally, an integer type as a _key 
 	/// </summary>
-	/// <param name="maxSize">The Maximum size this tree is allowed to grow.</param>
-	public GenericRedBlackTree(int maxSize)
+	/// <param name="maxCapacity">The Maximum size this tree is allowed to grow.</param>
+	public RedBlackTree(int maxCapacity)
 	{
-		if (EqualityComparer<int>.Default.Equals(maxSize, default))
+		if (EqualityComparer<int>.Default.Equals(maxCapacity, default))
 		{
-			_maxSize = default;
+			_maxCapacity = default;
 		}
 		else
 		{
-			if (maxSize < 0)
+			if (maxCapacity < 0)
 			{
-				_maxSize = 0;
+				_maxCapacity = 0;
 			}
 			else
 			{
-				_maxSize = maxSize;
+				_maxCapacity = maxCapacity;
 			}
 		}
 	}
 
 	/// <summary>
-	/// Initializes a new instance of the <see cref="GenericRedBlackTree{TValue}"/> class.
+	/// Initializes a new instance of the <see cref="RedBlackTree{TValue}"/> class.
 	/// </summary>
-	public GenericRedBlackTree() : this(default) { }
+	public RedBlackTree() : this(default) { }
 
 	/// <summary>
 	/// Gets the set of keys in the Red-Black Tree.
@@ -59,20 +59,20 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 	/// <summary>
 	/// Gets or sets the maximum size of the tree. If set to null, there is no maximum size limit.
 	/// </summary>
-	public int MaxSize
+	public int MaxCapacity
 	{
-		get => _maxSize;
+		get => _maxCapacity;
 		set
 		{
-			if (_maxSize == default) _maxSize = value;
+			if (_maxCapacity == default) _maxCapacity = value;
 		}
 	}
 
 	/// <summary>
-	/// Checks if the Red-Black Tree contains a specific key.
+	/// Checks if the Red-Black Tree contains a specific _key.
 	/// </summary>
-	/// <param name="id">The key to check for.</param>
-	/// <returns>True if the key is present in the tree; otherwise, false.</returns>
+	/// <param name="id">The _key to check for.</param>
+	/// <returns>True if the _key is present in the tree; otherwise, false.</returns>
 	public bool Contains(int id) => _index.Contains(id);
 
 	/// <summary>
@@ -81,20 +81,20 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 	public int Count { get => _index.Count; }
 
 	/// <summary>
-	/// Inserts a new key-value pair into the Red-Black Tree.
+	/// Inserts a new _key-|||_value pair into the Red-Black Tree.
 	/// </summary>
-	/// <param name="key">The key to insert.</param>
-	/// <param name="value">The value associated with the key.</param>
+	/// <param name="key">The _key to insert.</param>
+	/// <param name="value">The |||_value associated with the _key.</param>
 	public void Insert(int key, TValue value)
 	{
-		if (key < 0) throw new ArgumentException($"Invalid Key, the key {key} must be a non-negative integer.");
-		if (_maxSize != 0 && _index.Count >= _maxSize) throw new InvalidOperationException($"Key:{key} with Value:{value} was not inserted, The maximum size of the tree has been reached or exceeded.");
+		if (key < 0) throw new ArgumentException($"Invalid Key, the _key {key} must be a non-negative integer.");
+		if (_maxCapacity != 0 && _index.Count >= _maxCapacity) throw new InvalidOperationException($"Key:{key} with Value:{value} was not inserted, The maximum size of the tree has been reached or exceeded.");
 
 		if (_index.Add(key))
 		{
-			var newNode = PoolFactory.Create(() => new GenericRedBlackTreeNode(key, value));
+			var newNode = PoolFactory.Create(() => new RedBlackNode(key, value));
 
-			if (_root == null)
+			if (_root == null || _root.Value == null)
 			{
 				_root = newNode;
 				_root.IsRed = false;
@@ -110,9 +110,9 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 	}
 
 	/// <summary>
-	/// Removes a key-value pair from the Red-Black Tree.
+	/// Removes a _key-|||_value pair from the Red-Black Tree.
 	/// </summary>
-	/// <param name="key">The key to remove.</param>
+	/// <param name="key">The _key to remove.</param>
 	public void Remove(int key)
 	{
 		var node = FindNodeContainingKey(_root, key);
@@ -127,14 +127,14 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 	}
 
 	/// <summary>
-	/// Updates the value associated with a key in the Red-Black Tree.
+	/// Updates the |||_value associated with a _key in the Red-Black Tree.
 	/// </summary>
-	/// <param name="key">The key to update.</param>
-	/// <param name="value">The new value to associate with the key.</param>
+	/// <param name="key">The _key to update.</param>
+	/// <param name="value">The new |||_value to associate with the _key.</param>
 	public void Update(int key, TValue value)
 	{
-		if (key < 0) throw new ArgumentException($"Invalid Key:{key}, the key must be a non-negative integer.");
-		if (_index.Count >= _maxSize && _maxSize != 0) throw new InvalidOperationException($"The maximum size of the tree has been reached or exceeded. Remove entries before attempting to add more.");
+		if (key < 0) throw new ArgumentException($"Invalid Key:{key}, the _key must be a non-negative integer.");
+		if (_index.Count >= _maxCapacity && _maxCapacity != 0) throw new InvalidOperationException($"The maximum size of the tree has been reached or exceeded. Remove entries before attempting to add more.");
 
 		if (!_index.Contains(key) || FindNodeContainingKey(_root, key) == null)
 		{
@@ -146,23 +146,23 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 	}
 
 	/// <summary>
-	/// Gets the value associated with a specific key in the Red-Black Tree.
+	/// Gets the |||_value associated with a specific _key in the Red-Black Tree.
 	/// </summary>
-	/// <param name="key">The key to look up.</param>
-	/// <returns>The value associated with the key.</returns>
+	/// <param name="key">The _key to look up.</param>
+	/// <returns>The |||_value associated with the _key.</returns>
 	public TValue GetValue(int key)
 	{
-		if (key < 0) throw new ArgumentOutOfRangeException($"Invalid Key, the key {key} must be a non-negative integer.");
+		if (key < 0) throw new ArgumentOutOfRangeException($"Invalid Key, the _key {key} must be a non-negative integer.");
 		if (!_index.Contains(key)) throw new KeyNotFoundException($"The Key was not found. Key:{key} was unable to be removed.");
 
 		return FindNodeContainingKey(_root, key).Value;
 	}
 
 	/// <summary>
-	/// Gets or sets the value associated with the specified key in the Red-Black Tree.
+	/// Gets or sets the |||_value associated with the specified _key in the Red-Black Tree.
 	/// </summary>
-	/// <param name="key">The key to access or modify.</param>
-	/// <returns>The value associated with the key.</returns>
+	/// <param name="key">The _key to access or modify.</param>
+	/// <returns>The |||_value associated with the _key.</returns>
 	public TValue this[int key]
 	{
 		get
@@ -184,28 +184,24 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 		}
 	}
 
-	/// <summary>
-	/// Returns an enumerator that iterates through the elements of the Red-Black Tree in an in-order traversal.
-	/// </summary>
-	/// <returns>An enumerator that can be used to iterate through the elements of the Red-Black Tree in an in-order traversal.</returns>
-	public IEnumerator<KeyValuePair<int, TValue>> GetEnumerator() => GetAll().GetEnumerator();
+
 
 	/// <summary>
 	/// Returns all elements of the Red-Black Tree.
 	/// </summary>
-	/// <returns>An enumerable of all key-value pairs.</returns>
+	/// <returns>An enumerable of all _key-|||_value pairs.</returns>
 	public IEnumerable<KeyValuePair<int, TValue>> GetAll()
 	{
-		var queue = PoolFactory.Create(() => new Queue<GenericRedBlackTreeNode>());
-		PoolFactory.SetPoolResetAction<Queue<GenericRedBlackTreeNode>>((queue) => queue.Clear());
+		var queue = PoolFactory.Create(() => new Queue<RedBlackNode>());
+		PoolFactory.SetPoolResetAction<Queue<RedBlackNode>>((queue) => queue.Clear());
 		queue.Enqueue(_root);
 
 		while (queue.Count > 0)
 		{
 			var currentNode = queue.Dequeue();
 
-			if (currentNode.Left != null) queue.Enqueue(currentNode.Left as GenericRedBlackTreeNode);
-			if (currentNode.Right != null) queue.Enqueue(currentNode.Right as GenericRedBlackTreeNode);
+			if (currentNode.Left != null) queue.Enqueue(currentNode.Left as RedBlackNode);
+			if (currentNode.Right != null) queue.Enqueue(currentNode.Right as RedBlackNode);
 
 			yield return new KeyValuePair<int, TValue>(currentNode.Key, currentNode.Value);
 			PoolFactory.Recycle(currentNode);
@@ -218,18 +214,18 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 	/// </summary>
 	/// <param name="list">The HasSet containing the keys to return.</param>
 	/// <returns>an IEnumerable collection of KeyValuePair items.</returns>
-	public IEnumerable<KeyValuePair<int, TValue>> GetList(List<int> list)
+	public IEnumerable<KeyValuePair<int, TValue>> GetBulkValues(List<int> list)
 	{
-		var queue = PoolFactory.Create(() => new Queue<GenericRedBlackTreeNode>());
-		PoolFactory.SetPoolResetAction<Queue<GenericRedBlackTreeNode>>((queue) => queue.Clear());
+		var queue = PoolFactory.Create(() => new Queue<RedBlackNode>());
+		PoolFactory.SetPoolResetAction<Queue<RedBlackNode>>((queue) => queue.Clear());
 		queue.Enqueue(_root);
 
 		while (queue.Count > 0)
 		{
 			var currentNode = queue.Dequeue();
 
-			if (currentNode.Left != null) queue.Enqueue(currentNode.Left as GenericRedBlackTreeNode);
-			if (currentNode.Right != null) queue.Enqueue(currentNode.Right as GenericRedBlackTreeNode);
+			if (currentNode.Left != null) queue.Enqueue(currentNode.Left as RedBlackNode);
+			if (currentNode.Right != null) queue.Enqueue(currentNode.Right as RedBlackNode);
 
 			if (list.Remove(currentNode.Key))
 			{
@@ -241,13 +237,13 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 	}
 
 	/// <summary>
-	/// Performs bulk insertion of key-value pairs into the Red-Black Tree.
+	/// Performs bulk insertion of _key-|||_value pairs into the Red-Black Tree.
 	/// </summary>
-	/// <param name="keyValuePairs">The key-value pairs to insert.</param>
+	/// <param name="keyValuePairs">The _key-|||_value pairs to insert.</param>
 	public void BulkInsert(IEnumerable<KeyValuePair<int, TValue>> keyValuePairs)
 	{
 		ArgumentNullException.ThrowIfNull(keyValuePairs);
-		if (_maxSize > 0 && _index.Count + keyValuePairs.Count() > _maxSize) throw new InvalidOperationException($"The maximum size of {_maxSize} has been reached or exceeded. This bulk insert requires {_index.Count + keyValuePairs.Count()} total spaces.");
+		if (_maxCapacity > 0 && _index.Count + keyValuePairs.Count() > _maxCapacity) throw new InvalidOperationException($"The maximum size of {_maxCapacity} has been reached or exceeded. This bulk insert requires {_index.Count + keyValuePairs.Count()} total spaces.");
 
 		// Convert the collection to an array for easier indexing
 		var pairsArray = keyValuePairs.ToArray();
@@ -274,10 +270,22 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 	public void ResetState()
 	{
 		PoolFactory.Recycle(_index);
-		PoolFactory.Recycle(_root);
+		RecycleNodes(_root);
 
 		_index = PoolFactory.Create(() => new HashSet<int>());
-		_maxSize = default;
+		_maxCapacity = 0;
+	}
+
+	private static void RecycleNodes(RedBlackNode node)
+	{
+		if (node == null)
+			return;
+
+		RecycleNodes((RedBlackNode)node.Left);
+		RecycleNodes((RedBlackNode)node.Right);
+
+		// Recycle the node using your pooling mechanism
+		PoolFactory.Recycle(node);
 	}
 
 	/// <summary>
@@ -290,7 +298,7 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 		if (obj == null || GetType() != obj.GetType())
 			return false;
 
-		var other = (GenericRedBlackTree<TValue>)obj;
+		var other = (RedBlackTree<TValue>)obj;
 		return _root.Key.Equals(other._root.Key) && _root.Value.Equals(other._root.Value);
 	}
 
@@ -300,7 +308,13 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 	/// <returns>A Hash code for the current object</returns>
 	public override int GetHashCode()
 	{
-		return HashCode.Combine(_root.Key, _root.Value);
+		HashCode code = new();
+		code.Add(_maxCapacity.GetHashCode());
+
+		if (_index != null) code.Add(_index.GetHashCode());
+		if (_root != null) code.Add(_root.GetHashCode());
+
+		return code.ToHashCode();
 	}
 
 	/// <summary>
@@ -309,7 +323,7 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 	/// <returns>A CSV string containing details about the tree. </returns>
 	public override string ToString()
 	{
-		return $"HashCode:{GetHashCode}, Count:{Count}, Max Capacity:{MaxSize} ";
+		return $"HashCode:{GetHashCode()}, Count:{Count}, Max Capacity:{MaxCapacity} ";
 	}
 
 	/// <summary>
@@ -322,7 +336,7 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 		return FindNodeContainingKey(_root, key).ToString();
 	}
 
-	private void InsertRebalance(GenericRedBlackTreeNode node)
+	private void InsertRebalance(RedBlackNode node)
 	{
 		ArgumentNullException.ThrowIfNull(node);
 		if (node.Parent == null) throw new InvalidOperationException($"The provided node, Details:{node}, Cannot be Rebalanced with no Parent node.");
@@ -340,21 +354,21 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 					node.Parent.IsRed = false;
 					uncle.IsRed = false;
 					node.Parent.Parent.IsRed = true;
-					node = (GenericRedBlackTreeNode)node.Parent.Parent; // Move up the tree for further checking
+					node = (RedBlackNode)node.Parent.Parent; // Move up the tree for further checking
 				}
 				else
 				{
 					if (node == node.Parent.Right)
 					{
 						// Case 2: Left rotate to make it Case 3
-						node = (GenericRedBlackTreeNode)node.Parent;
+						node = (RedBlackNode)node.Parent;
 						LeftRotate(node);
 					}
 
 					// Case 3: Recolor and right rotate the grandparent
 					node.Parent.IsRed = false;
 					node.Parent.Parent.IsRed = true;
-					RightRotate((GenericRedBlackTreeNode)node.Parent.Parent);
+					RightRotate((RedBlackNode)node.Parent.Parent);
 				}
 			}
 			else
@@ -367,30 +381,30 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 					node.Parent.IsRed = false;
 					uncle.IsRed = false;
 					node.Parent.Parent.IsRed = true;
-					node = (GenericRedBlackTreeNode)node.Parent.Parent; // Move up the tree for further checking
+					node = (RedBlackNode)node.Parent.Parent; // Move up the tree for further checking
 				}
 				else
 				{
 					if (node == node.Parent.Left)
 					{
 						// Case 2: Right rotate to make it Case 3
-						node = (GenericRedBlackTreeNode)node.Parent;
+						node = (RedBlackNode)node.Parent;
 						RightRotate(node);
 					}
 
 					// Case 3: Recolor and left rotate the grandparent
 					node.Parent.IsRed = false;
 					node.Parent.Parent.IsRed = true;
-					LeftRotate((GenericRedBlackTreeNode)node.Parent.Parent);
+					LeftRotate((RedBlackNode)node.Parent.Parent);
 				}
 			}
 		}
 
-		// Ensure the root is black
+		// Ensure the _root is black
 		_root.IsRed = false;
 	}
 
-	private void LeftRotate(GenericRedBlackTreeNode pivot)
+	private void LeftRotate(RedBlackNode pivot)
 	{
 		if (pivot == null || pivot.Right == null)
 		{
@@ -410,7 +424,7 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 
 		if (pivot.Parent == null)
 		{
-			_root = newRoot as GenericRedBlackTreeNode;
+			_root = newRoot as RedBlackNode;
 		}
 		else if (pivot == pivot.Parent.Left)
 		{
@@ -425,7 +439,7 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 		pivot.Parent = newRoot;
 	}
 
-	private void RightRotate(GenericRedBlackTreeNode pivot)
+	private void RightRotate(RedBlackNode pivot)
 	{
 		if (pivot == null || pivot.Left == null)
 		{
@@ -445,7 +459,7 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 
 		if (pivot.Parent == null)
 		{
-			_root = newRoot as GenericRedBlackTreeNode;
+			_root = newRoot as RedBlackNode;
 		}
 		else if (pivot == pivot.Parent.Left)
 		{
@@ -460,17 +474,22 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 		pivot.Parent = newRoot;
 	}
 
-	private static void InsertNode(GenericRedBlackTreeNode parentNode, GenericRedBlackTreeNode newNode)
+	private static void InsertNode(RedBlackNode parentNode, RedBlackNode newNode)
 	{
+		ArgumentNullException.ThrowIfNull(parentNode);
+		ArgumentNullException.ThrowIfNull(newNode);
+
+
 		if (newNode.Key < parentNode.Key)
 		{
 			if (parentNode.Left == null)
 			{
 				parentNode.Left = newNode;
+				newNode.Parent = parentNode;
 			}
 			else
 			{
-				InsertNode(parentNode.Left as GenericRedBlackTreeNode, newNode);
+				InsertNode(parentNode.Left as RedBlackNode, newNode);
 			}
 		}
 		else if (newNode.Key > parentNode.Key)
@@ -478,24 +497,26 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 			if (parentNode.Right == null)
 			{
 				parentNode.Right = newNode;
+				newNode.Parent = parentNode;
 			}
 			else
 			{
-				InsertNode(parentNode.Right as GenericRedBlackTreeNode, newNode);
+				InsertNode(parentNode.Right as RedBlackNode, newNode);
 			}
 		}
-		else
+		else if (newNode.Key == parentNode.Key)
 		{
 			throw new DuplicateNameException($"{newNode.Key}");
 		}
+
 	}
 
-	private void RemoveNode(GenericRedBlackTreeNode node)
+	private void RemoveNode(RedBlackNode node)
 	{
 		var replacementNode = node.Left == null || node.Right == null ? node : Successor(ref node);
-		var child = replacementNode.Left ?? replacementNode.Right as GenericRedBlackTreeNode;
+		var child = replacementNode.Left ?? replacementNode.Right as RedBlackNode;
 
-		ReplaceNode(replacementNode, child as GenericRedBlackTreeNode);
+		ReplaceNode(replacementNode, child as RedBlackNode);
 
 		if (replacementNode != node)
 		{
@@ -507,8 +528,8 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 
 		if (!replacementNode.IsRed)
 		{
-			GenericRedBlackTreeNode childNode = child as GenericRedBlackTreeNode;
-			FixRemove(ref childNode, replacementNode.Parent as GenericRedBlackTreeNode);
+			RedBlackNode childNode = child as RedBlackNode;
+			FixRemove(ref childNode, replacementNode.Parent as RedBlackNode);
 		}
 	}
 
@@ -517,7 +538,7 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 	/// </summary>
 	/// <param name="replacementNode">The node to be replaced.</param>
 	/// <param name="child">The replacement node.</param>
-	private void ReplaceNode(GenericRedBlackTreeNode replacementNode, GenericRedBlackTreeNode child)
+	private void ReplaceNode(RedBlackNode replacementNode, RedBlackNode child)
 	{
 		if (child != null)
 		{
@@ -539,22 +560,22 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 	}
 
 	/// <summary>
-	/// Finds a node in the Red-Black Tree that contains a specific key.
+	/// Finds a node in the Red-Black Tree that contains a specific _key.
 	/// </summary>
 	/// <param name="currentNode">The current node to start the search from.</param>
-	/// <param name="key">The key to search for.</param>
-	/// <returns>The node containing the key, or null if not found.</returns>
-	private static GenericRedBlackTreeNode FindNodeContainingKey(GenericRedBlackTreeNode currentNode, int key)
+	/// <param name="key">The _key to search for.</param>
+	/// <returns>The node containing the _key, or null if not found.</returns>
+	private static RedBlackNode FindNodeContainingKey(RedBlackNode currentNode, int key)
 	{
-		ConcurrentQueue<GenericRedBlackTreeNode> Queue = new();
+		ConcurrentQueue<RedBlackNode> Queue = new();
 		Queue.Enqueue(currentNode);
 
-		while (Queue.TryDequeue(out GenericRedBlackTreeNode node))
+		while (Queue.TryDequeue(out RedBlackNode node))
 		{
 			if (node.Key == key) return node;
 
-			if (node.Left != null) Queue.Enqueue(node.Left as GenericRedBlackTreeNode);
-			if (node.Right != null) Queue.Enqueue(node.Right as GenericRedBlackTreeNode);
+			if (node.Left != null) Queue.Enqueue(node.Left as RedBlackNode);
+			if (node.Right != null) Queue.Enqueue(node.Right as RedBlackNode);
 		}
 
 		throw new KeyNotFoundException($"Key:{key} was not found in the Tree.");
@@ -563,12 +584,12 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 	/// <summary>
 	/// Finds the minimum node in a given Red-Black Tree.
 	/// </summary>
-	/// <param name="currentNode">The root node of the tree.</param>
+	/// <param name="currentNode">The _root node of the tree.</param>
 	/// <returns>The minimum node in the tree.</returns>
-	private static GenericRedBlackTreeNode Minimum(GenericRedBlackTreeNode currentNode)
+	private static RedBlackNode Minimum(RedBlackNode currentNode)
 	{
 		while (currentNode.Left != null)
-			currentNode = (GenericRedBlackTreeNode)currentNode.Left;
+			currentNode = (RedBlackNode)currentNode.Left;
 		return currentNode;
 	}
 
@@ -577,18 +598,18 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 	/// </summary>
 	/// <param name="currentNode">The node to find the successor for.</param>
 	/// <returns>The successor node of the given node.</returns>
-	private static GenericRedBlackTreeNode Successor(ref GenericRedBlackTreeNode currentNode)
+	private static RedBlackNode Successor(ref RedBlackNode currentNode)
 	{
 		if (currentNode.Right != null)
-			return Minimum((GenericRedBlackTreeNode)currentNode.Right);
+			return Minimum((RedBlackNode)currentNode.Right);
 
 		var parent = currentNode.Parent;
 		while (parent != null && currentNode == parent.Right)
 		{
-			currentNode = (GenericRedBlackTreeNode)parent;
+			currentNode = (RedBlackNode)parent;
 			parent = parent.Parent;
 		}
-		return (GenericRedBlackTreeNode)parent;
+		return (RedBlackNode)parent;
 	}
 
 	/// <summary>
@@ -596,36 +617,36 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 	/// </summary>
 	/// <param name="currentNode">The node to check.</param>
 	/// <returns>True if the node is red; otherwise, false.</returns>
-	private static bool IsRed(GenericRedBlackTreeNode currentNode) => currentNode != null && currentNode.IsRed;
+	private static bool IsRed(RedBlackNode currentNode) => currentNode != null && currentNode.IsRed;
 
 	/// <summary>
 	/// Checks if a given node is the left child of its parent.
 	/// </summary>
 	/// <param name="currentNode">The node to check.</param>
 	/// <returns>True if the node is the left child; otherwise, false.</returns>
-	private static bool IsLeftChild(GenericRedBlackTreeNode currentNode) => currentNode == currentNode.Parent.Left;
+	private static bool IsLeftChild(RedBlackNode currentNode) => currentNode == currentNode.Parent.Left;
 
 	/// <summary>
 	/// Gets the left sibling of a given node.
 	/// </summary>
 	/// <param name="currentNode">The node to find the left sibling for.</param>
 	/// <returns>The left sibling of the node.</returns>
-	private static GenericRedBlackTreeNode GetLeftSibling(GenericRedBlackTreeNode currentNode) =>
-		(GenericRedBlackTreeNode)currentNode.Parent.Left;
+	private static RedBlackNode GetLeftSibling(RedBlackNode currentNode) =>
+		(RedBlackNode)currentNode.Parent.Left;
 
 	/// <summary>
 	/// Gets the right sibling of a given node.
 	/// </summary>
 	/// <param name="currentNode">The node to find the right sibling for.</param>
 	/// <returns>The right sibling of the node.</returns>
-	private static GenericRedBlackTreeNode GetRightSibling(GenericRedBlackTreeNode currentNode) =>
-		(GenericRedBlackTreeNode)currentNode.Parent.Right;
+	private static RedBlackNode GetRightSibling(RedBlackNode currentNode) =>
+		(RedBlackNode)currentNode.Parent.Right;
 
 	/// <summary>
 	/// Recolors the given nodes in the Red-Black Tree, toggling their color between red and black.
 	/// </summary>
 	/// <param name="nodes">The nodes to recolor.</param>
-	private static void RecolorNodes(params GenericRedBlackTreeNode[] nodes)
+	private static void RecolorNodes(params RedBlackNode[] nodes)
 	{
 		foreach (var n in nodes)
 		{
@@ -638,7 +659,7 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 	/// </summary>
 	/// <param name="currentNode">The node to fix.</param>
 	/// <param name="parent">The parent of the node.</param>
-	private void FixRemove(ref GenericRedBlackTreeNode currentNode, GenericRedBlackTreeNode parent)
+	private void FixRemove(ref RedBlackNode currentNode, RedBlackNode parent)
 	{
 		while (IsBlack(currentNode) && currentNode != _root)
 		{
@@ -656,11 +677,11 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 			currentNode.IsRed = false;
 	}
 
-	private void FixRemoveForChild(ref GenericRedBlackTreeNode currentNode, GenericRedBlackTreeNode parent, Func<GenericRedBlackTreeNode, GenericRedBlackTreeNode> getSiblingChild)
+	private void FixRemoveForChild(ref RedBlackNode currentNode, RedBlackNode parent, Func<RedBlackNode, RedBlackNode> getSiblingChild)
 	{
 		while (IsBlack(currentNode) && currentNode != _root)
 		{
-			var sibling = getSiblingChild(currentNode.Parent as GenericRedBlackTreeNode);
+			var sibling = getSiblingChild(currentNode.Parent as RedBlackNode);
 
 			if (IsRed(sibling))
 			{
@@ -716,15 +737,15 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 	/// </summary>
 	/// <param name="currentNode">The node to check.</param>
 	/// <returns>True if the node is black; otherwise, false.</returns>
-	private static bool IsBlack(GenericRedBlackTreeNode currentNode) => currentNode == null || !currentNode.IsRed;
+	private static bool IsBlack(RedBlackNode currentNode) => currentNode == null || !currentNode.IsRed;
 
 	/// <summary>
 	/// Rotates the tree to the left, preserving the Red-Black Tree properties.
 	/// </summary>
 	/// <param name="leftNode">The node to rotate.</param>
-	private void RotateLeft(GenericRedBlackTreeNode leftNode)
+	private void RotateLeft(RedBlackNode leftNode)
 	{
-		GenericRedBlackTreeNode rightNode = (GenericRedBlackTreeNode)leftNode.Right;
+		RedBlackNode rightNode = (RedBlackNode)leftNode.Right;
 		leftNode.Right = rightNode.Left;
 
 		if (rightNode.Left != null)
@@ -747,9 +768,9 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 	/// Rotates the tree to the right, preserving the Red-Black Tree properties.
 	/// </summary>
 	/// <param name="rightNode">The node to rotate.</param>
-	private void RotateRight(GenericRedBlackTreeNode rightNode)
+	private void RotateRight(RedBlackNode rightNode)
 	{
-		GenericRedBlackTreeNode leftNode = (GenericRedBlackTreeNode)rightNode.Left;
+		RedBlackNode leftNode = (RedBlackNode)rightNode.Left;
 		rightNode.Left = leftNode.Right;
 
 		if (leftNode.Right != null)
@@ -769,14 +790,14 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 	}
 
 	/// <summary>
-	/// Builds a Red-Black Tree from an array of key-value pairs.
+	/// Builds a Red-Black Tree from an array of _key-|||_value pairs.
 	/// </summary>
 	/// <param name="pairsArray">The array of KeyValuePairs to build the tree with.</param>
 	/// <param name="start">The position to start adding items from..</param>
 	/// <param name="end">The position to stop adding items at.</param>
 	/// <param name="parent">The node where the tree is merged.</param>
 	/// <returns>the newly formed tree at a node to add into a Tree.</returns>
-	private static GenericRedBlackTreeNode BuildTreeFromArray(KeyValuePair<int, TValue>[] pairsArray, int start, int end, GenericRedBlackTreeNode parent)
+	private static RedBlackNode BuildTreeFromArray(KeyValuePair<int, TValue>[] pairsArray, int start, int end, RedBlackNode parent)
 	{
 		if (start > end)
 		{
@@ -785,7 +806,7 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 
 		int mid = (start + end) / 2;
 
-		var newNode = PoolFactory.Create(() => new GenericRedBlackTreeNode(pairsArray[mid].Key, pairsArray[mid].Value));
+		var newNode = PoolFactory.Create(() => new RedBlackNode(pairsArray[mid].Key, pairsArray[mid].Value));
 		newNode.Parent = parent;
 
 		// Recursively build the left and right subtrees
@@ -794,4 +815,6 @@ public sealed partial class GenericRedBlackTree<TValue> : IGenericRedBlackTree<T
 
 		return newNode;
 	}
+
+	
 }

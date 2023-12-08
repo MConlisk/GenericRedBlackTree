@@ -1,24 +1,25 @@
 using System.Diagnostics;
-using Trees;
+using DataStructures.Trees;
 using System.Collections.Generic;
 using System;
+using NUnit.Framework.Legacy;
 
 namespace RedBlackTree.Tests
 {
 	[TestFixture]
 	public class RedBlackTreeTests
 	{
-		private GenericRedBlackTree<string> _tree;
+		private RedBlackTree<string> _tree;
 		private List<int> _keys;
 
 		[SetUp]
-		public void Setup()
+		public void CommonSetup()
 		{
-			_tree = new GenericRedBlackTree<string>();
+			_tree = new RedBlackTree<string>();
 			_keys = new List<int>();
 		}
 
-		[Test]
+		[Test, Order(10)]
 		public void Contains_ReturnsTrue_WhenKeyExists()
 		{
 			// Arrange
@@ -32,7 +33,7 @@ namespace RedBlackTree.Tests
 			Assert.That(_tree.Contains(key));
 		}
 
-		[Test]
+		[Test, Order(2)]
 		public void Contains_ReturnsFalse_WhenKeyDoesNotExist()
 		{
 			// Arrange
@@ -45,7 +46,7 @@ namespace RedBlackTree.Tests
 			Assert.That(_tree.Contains(key), Is.False);
 		}
 
-		[Test]
+		[Test, Order(3)]
 		public void Count_ReturnsCorrectNumberOfElements()
 		{
 			// Arrange
@@ -61,12 +62,12 @@ namespace RedBlackTree.Tests
 			Assert.That(count, Is.EqualTo(3));
 		}
 
-		[Test]
+		[Test, Order(4)]
 		public void Insert_AddsKeyValuePairToTree()
 		{
 			// Arrange
 			int key = 5;
-			string value = "Value";
+			string value = "Value5";
 
 			// Act
 			_tree.Insert(key, value);
@@ -76,7 +77,7 @@ namespace RedBlackTree.Tests
 			Assert.That(_tree.Contains(key));
 		}
 
-		[Test]
+		[Test, Order(5)]
 		public void Index_ReturnsReadOnlyCollectionOfKeys()
 		{
 			// Arrange
@@ -90,39 +91,40 @@ namespace RedBlackTree.Tests
 
 			// Assert
 			Assert.That(index, Has.Count.EqualTo(3));
+			
 			Assert.That(index, Does.Contain(1));
 			Assert.That(index, Does.Contain(2));
 			Assert.That(index, Does.Contain(3));
 		}
 
-		[Test]
+		[Test, Order(6)]
 		public void MaxSize_SetToZero_UnlimitedSize()
 		{
 			// Arrange
-			_tree.MaxSize = 0;
+			_tree.MaxCapacity = 0;
 
 			// Act
-			int? maxSize = _tree.MaxSize;
+			int? maxSize = _tree.MaxCapacity;
 
 			// Assert
 			Assert.That(maxSize, Is.EqualTo(0));
 		}
 
-		[Test]
+		[Test, Order(7)]
 		public void MaxSize_SetToValue_SetsMaximumSizeLimit()
 		{
 			// Arrange
 			int maxSize = 100;
-			_tree.MaxSize = maxSize;
+			_tree.MaxCapacity = maxSize;
 
 			// Act
-			int? actualMaxSize = _tree.MaxSize;
+			int? actualMaxSize = _tree.MaxCapacity;
 
 			// Assert
 			Assert.That(actualMaxSize, Is.EqualTo(maxSize));
 		}
 
-		[Test]
+		[Test, Order(8)]
 		public void SpeedTest_MeasuresExecutionTime()
 		{
 			// Arrange
@@ -136,14 +138,14 @@ namespace RedBlackTree.Tests
 					//Console.WriteLine($"Insert in List: i={i}, Value={_tree.GetValue(i)}");
 				}
 				//Console.WriteLine($"Insert in Tree: i={i}, Value={_tree.GetValue(i)}");
-				Console.WriteLine(_tree.ToString(3));
+				Console.WriteLine(_tree.ToString(i));
 			}
 			Console.WriteLine("Prepare Data Finished");
 
 
 			// Act
 			stopwatch.Start();
-			GenericRedBlackTree<string> processList = new();
+			RedBlackTree<string> processList = new();
 
 
 			// pull the objects on the List from the tree
@@ -157,7 +159,7 @@ namespace RedBlackTree.Tests
 				{
 					Console.WriteLine($"Get Data in List: Key={key}, was in the processList but not in the tree.");
 				}
-				Console.WriteLine(_tree.ToString(3));
+				Console.WriteLine(_tree.ToString(key));
 			}
 
 			// process and Update the objects on the list
@@ -172,7 +174,7 @@ namespace RedBlackTree.Tests
 				{
 					Console.WriteLine($"Update Tree: Key={entry.Key}, was in the processList but not in the tree.");
 				}
-				Console.WriteLine(_tree.ToString(3));
+				Console.WriteLine(_tree.ToString(entry.Key));
 			}
 			
 			stopwatch.Stop();
@@ -191,11 +193,11 @@ namespace RedBlackTree.Tests
 
 		}
 
-		[Test]
+		[Test, Order(9)]
 		public void LimitTest_PerformsOperationsAtMaximumSize()
 		{
 			// Arrange
-			_tree.MaxSize = 100;
+			_tree.MaxCapacity = 100;
 
 			// Act
 			for (int i = 0; i < 100; i++)
@@ -216,17 +218,17 @@ namespace RedBlackTree.Tests
 			Assert.Pass("Operations performed at maximum size");
 		}
 
-		[Test]
+		[Test, Order(1)]
 		public void LimitTest_ThrowsExceptionBeyondMaximumSize()
 		{
 			// Arrange
-			_tree.MaxSize = 5; // Set a small maximum size for illustration purposes
+			_tree.MaxCapacity = 5; // Set a small maximum size for illustration purposes
 
 			// Act
 			for (int i = 0; i < 5; i++)
 			{
 				_tree.Insert(i, $"Value{i}");
-				Console.WriteLine(_tree.ToString(3));
+				Console.WriteLine(_tree.ToString(i));
 			}
 
 			// Assert
@@ -240,6 +242,7 @@ namespace RedBlackTree.Tests
 			}
 			
 		}
+
 
 
 	}
