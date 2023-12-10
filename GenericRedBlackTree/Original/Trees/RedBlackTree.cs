@@ -1,5 +1,4 @@
-﻿using DataStructures.Interfaces;
-
+﻿using DataStructures.Original.Interfaces;
 using Factories;
 
 using System;
@@ -12,7 +11,7 @@ using System.Linq;
 namespace DataStructures.Trees;
 
 /// <summary>
-/// This is a Red-Black Tree with a Generic |||_value type.
+/// This is a Red-Black UniversalTree with a Generic _value type.
 /// additionally, an integer type as a _key 
 /// </summary>
 /// <typeparam name="TValue">The Generic _value Type</typeparam>
@@ -23,7 +22,7 @@ public sealed partial class RedBlackTree<TValue> : IRedBlackTree<int, TValue>
 	private HashSet<int> _index = PoolFactory.Create(() => new HashSet<int>());
 
 	/// <summary>
-	/// This is a Red-Black Tree with a Generic |||_value type.
+	/// This is a Red-Black UniversalTree with a Generic |||_value type.
 	/// additionally, an integer type as a _key 
 	/// </summary>
 	/// <param name="maxCapacity">The Maximum size this tree is allowed to grow.</param>
@@ -52,7 +51,7 @@ public sealed partial class RedBlackTree<TValue> : IRedBlackTree<int, TValue>
 	public RedBlackTree() : this(default) { }
 
 	/// <summary>
-	/// Gets the set of keys in the Red-Black Tree.
+	/// Gets the set of keys in the Red-Black UniversalTree.
 	/// </summary>
 	public ReadOnlyCollection<int> Index => new(_index.ToList());
 
@@ -69,19 +68,19 @@ public sealed partial class RedBlackTree<TValue> : IRedBlackTree<int, TValue>
 	}
 
 	/// <summary>
-	/// Checks if the Red-Black Tree contains a specific _key.
+	/// Checks if the Red-Black UniversalTree contains a specific _key.
 	/// </summary>
 	/// <param name="id">The _key to check for.</param>
 	/// <returns>True if the _key is present in the tree; otherwise, false.</returns>
 	public bool Contains(int id) => _index.Contains(id);
 
 	/// <summary>
-	/// Gets the number of elements in the Red-Black Tree.
+	/// Gets the number of elements in the Red-Black UniversalTree.
 	/// </summary>
 	public int Count { get => _index.Count; }
 
 	/// <summary>
-	/// Inserts a new _key-|||_value pair into the Red-Black Tree.
+	/// Inserts a new _key-|||_value pair into the Red-Black UniversalTree.
 	/// </summary>
 	/// <param name="key">The _key to insert.</param>
 	/// <param name="value">The |||_value associated with the _key.</param>
@@ -110,7 +109,7 @@ public sealed partial class RedBlackTree<TValue> : IRedBlackTree<int, TValue>
 	}
 
 	/// <summary>
-	/// Removes a _key-|||_value pair from the Red-Black Tree.
+	/// Removes a _key-|||_value pair from the Red-Black UniversalTree.
 	/// </summary>
 	/// <param name="key">The _key to remove.</param>
 	public void Remove(int key)
@@ -127,7 +126,7 @@ public sealed partial class RedBlackTree<TValue> : IRedBlackTree<int, TValue>
 	}
 
 	/// <summary>
-	/// Updates the |||_value associated with a _key in the Red-Black Tree.
+	/// Updates the |||_value associated with a _key in the Red-Black UniversalTree.
 	/// </summary>
 	/// <param name="key">The _key to update.</param>
 	/// <param name="value">The new |||_value to associate with the _key.</param>
@@ -146,7 +145,7 @@ public sealed partial class RedBlackTree<TValue> : IRedBlackTree<int, TValue>
 	}
 
 	/// <summary>
-	/// Gets the |||_value associated with a specific _key in the Red-Black Tree.
+	/// Gets the |||_value associated with a specific _key in the Red-Black UniversalTree.
 	/// </summary>
 	/// <param name="key">The _key to look up.</param>
 	/// <returns>The |||_value associated with the _key.</returns>
@@ -159,7 +158,7 @@ public sealed partial class RedBlackTree<TValue> : IRedBlackTree<int, TValue>
 	}
 
 	/// <summary>
-	/// Gets or sets the |||_value associated with the specified _key in the Red-Black Tree.
+	/// Gets or sets the |||_value associated with the specified _key in the Red-Black UniversalTree.
 	/// </summary>
 	/// <param name="key">The _key to access or modify.</param>
 	/// <returns>The |||_value associated with the _key.</returns>
@@ -187,7 +186,7 @@ public sealed partial class RedBlackTree<TValue> : IRedBlackTree<int, TValue>
 
 
 	/// <summary>
-	/// Returns all elements of the Red-Black Tree.
+	/// Returns all elements of the Red-Black UniversalTree.
 	/// </summary>
 	/// <returns>An enumerable of all _key-|||_value pairs.</returns>
 	public IEnumerable<KeyValuePair<int, TValue>> GetAll()
@@ -237,7 +236,7 @@ public sealed partial class RedBlackTree<TValue> : IRedBlackTree<int, TValue>
 	}
 
 	/// <summary>
-	/// Performs bulk insertion of _key-|||_value pairs into the Red-Black Tree.
+	/// Performs bulk insertion of _key-|||_value pairs into the Red-Black UniversalTree.
 	/// </summary>
 	/// <param name="keyValuePairs">The _key-|||_value pairs to insert.</param>
 	public void BulkInsert(IEnumerable<KeyValuePair<int, TValue>> keyValuePairs)
@@ -257,7 +256,7 @@ public sealed partial class RedBlackTree<TValue> : IRedBlackTree<int, TValue>
 		// Sort the array by keys to ensure balanced insertion
 		Array.Sort(pairsArray, (x, y) => x.Key.CompareTo(y.Key));
 
-		// Build the Red-Black Tree from the sorted array
+		// Build the Red-Black UniversalTree from the sorted array
 		_root = BuildTreeFromArray(pairsArray, 0, pairsArray.Length - 1, null);
 
 		// Rebalance the tree after bulk insertion
@@ -265,7 +264,7 @@ public sealed partial class RedBlackTree<TValue> : IRedBlackTree<int, TValue>
 	}
 
 	/// <summary>
-	/// Resets the state of the Red-Black Tree, effectively clearing it and resetting any configuration options.
+	/// Resets the state of the Red-Black UniversalTree, effectively clearing it and resetting any configuration options.
 	/// </summary>
 	public void ResetState()
 	{
@@ -400,7 +399,7 @@ public sealed partial class RedBlackTree<TValue> : IRedBlackTree<int, TValue>
 			}
 		}
 
-		// Ensure the _root is black
+		// Ensure the _treeModel is black
 		_root.IsRed = false;
 	}
 
@@ -534,7 +533,7 @@ public sealed partial class RedBlackTree<TValue> : IRedBlackTree<int, TValue>
 	}
 
 	/// <summary>
-	/// Replaces a node in the Red-Black Tree with a new node, updating parent and child relationships.
+	/// Replaces a node in the Red-Black UniversalTree with a new node, updating parent and child relationships.
 	/// </summary>
 	/// <param name="replacementNode">The node to be replaced.</param>
 	/// <param name="child">The replacement node.</param>
@@ -560,7 +559,7 @@ public sealed partial class RedBlackTree<TValue> : IRedBlackTree<int, TValue>
 	}
 
 	/// <summary>
-	/// Finds a node in the Red-Black Tree that contains a specific _key.
+	/// Finds a node in the Red-Black UniversalTree that contains a specific _key.
 	/// </summary>
 	/// <param name="currentNode">The current node to start the search from.</param>
 	/// <param name="key">The _key to search for.</param>
@@ -578,13 +577,13 @@ public sealed partial class RedBlackTree<TValue> : IRedBlackTree<int, TValue>
 			if (node.Right != null) Queue.Enqueue(node.Right as RedBlackNode);
 		}
 
-		throw new KeyNotFoundException($"Key:{key} was not found in the Tree.");
+		throw new KeyNotFoundException($"Key:{key} was not found in the UniversalTree.");
 	}
 
 	/// <summary>
-	/// Finds the minimum node in a given Red-Black Tree.
+	/// Finds the minimum node in a given Red-Black UniversalTree.
 	/// </summary>
-	/// <param name="currentNode">The _root node of the tree.</param>
+	/// <param name="currentNode">The _treeModel node of the tree.</param>
 	/// <returns>The minimum node in the tree.</returns>
 	private static RedBlackNode Minimum(RedBlackNode currentNode)
 	{
@@ -594,7 +593,7 @@ public sealed partial class RedBlackTree<TValue> : IRedBlackTree<int, TValue>
 	}
 
 	/// <summary>
-	/// Finds the successor node in a given Red-Black Tree.
+	/// Finds the successor node in a given Red-Black UniversalTree.
 	/// </summary>
 	/// <param name="currentNode">The node to find the successor for.</param>
 	/// <returns>The successor node of the given node.</returns>
@@ -643,7 +642,7 @@ public sealed partial class RedBlackTree<TValue> : IRedBlackTree<int, TValue>
 		(RedBlackNode)currentNode.Parent.Right;
 
 	/// <summary>
-	/// Recolors the given nodes in the Red-Black Tree, toggling their color between red and black.
+	/// Recolors the given nodes in the Red-Black UniversalTree, toggling their color between red and black.
 	/// </summary>
 	/// <param name="nodes">The nodes to recolor.</param>
 	private static void RecolorNodes(params RedBlackNode[] nodes)
@@ -655,7 +654,7 @@ public sealed partial class RedBlackTree<TValue> : IRedBlackTree<int, TValue>
 	}
 
 	/// <summary>
-	/// Fixes the Red-Black Tree after a remove operation to maintain the properties of the tree.
+	/// Fixes the Red-Black UniversalTree after a remove operation to maintain the properties of the tree.
 	/// </summary>
 	/// <param name="currentNode">The node to fix.</param>
 	/// <param name="parent">The parent of the node.</param>
@@ -740,7 +739,7 @@ public sealed partial class RedBlackTree<TValue> : IRedBlackTree<int, TValue>
 	private static bool IsBlack(RedBlackNode currentNode) => currentNode == null || !currentNode.IsRed;
 
 	/// <summary>
-	/// Rotates the tree to the left, preserving the Red-Black Tree properties.
+	/// Rotates the tree to the left, preserving the Red-Black UniversalTree properties.
 	/// </summary>
 	/// <param name="leftNode">The node to rotate.</param>
 	private void RotateLeft(RedBlackNode leftNode)
@@ -765,7 +764,7 @@ public sealed partial class RedBlackTree<TValue> : IRedBlackTree<int, TValue>
 	}
 
 	/// <summary>
-	/// Rotates the tree to the right, preserving the Red-Black Tree properties.
+	/// Rotates the tree to the right, preserving the Red-Black UniversalTree properties.
 	/// </summary>
 	/// <param name="rightNode">The node to rotate.</param>
 	private void RotateRight(RedBlackNode rightNode)
@@ -790,13 +789,13 @@ public sealed partial class RedBlackTree<TValue> : IRedBlackTree<int, TValue>
 	}
 
 	/// <summary>
-	/// Builds a Red-Black Tree from an array of _key-|||_value pairs.
+	/// Builds a Red-Black UniversalTree from an array of _key-|||_value pairs.
 	/// </summary>
 	/// <param name="pairsArray">The array of KeyValuePairs to build the tree with.</param>
 	/// <param name="start">The position to start adding items from..</param>
 	/// <param name="end">The position to stop adding items at.</param>
 	/// <param name="parent">The node where the tree is merged.</param>
-	/// <returns>the newly formed tree at a node to add into a Tree.</returns>
+	/// <returns>the newly formed tree at a node to add into a UniversalTree.</returns>
 	private static RedBlackNode BuildTreeFromArray(KeyValuePair<int, TValue>[] pairsArray, int start, int end, RedBlackNode parent)
 	{
 		if (start > end)

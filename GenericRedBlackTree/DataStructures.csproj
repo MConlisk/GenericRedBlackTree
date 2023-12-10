@@ -34,15 +34,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Factories\**" />
-    <Compile Remove="Nodes\**" />
     <EmbeddedResource Remove="Factories\**" />
-    <EmbeddedResource Remove="Nodes\**" />
     <None Remove="Factories\**" />
-    <None Remove="Nodes\**" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Interfaces\IKeyedValues.cs" />
-    <Compile Remove="Interfaces\IRecyclable.cs" />
+    <Compile Remove="Original\Interfaces\IKeyedValues.cs" />
+    <Compile Remove="Original\Interfaces\IRecyclable.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Documents\Documentation.XML" />
@@ -72,5 +69,8 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Original\Nodes\" />
   </ItemGroup>
 </Project>

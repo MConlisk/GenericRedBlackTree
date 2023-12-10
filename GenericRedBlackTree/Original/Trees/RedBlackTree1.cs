@@ -6,10 +6,9 @@ namespace DataStructures.Trees;
 
 public sealed partial class RedBlackTree<TValue> 
 {
-	private class RedBlackTEnumerator :  VIEnumerable<TKey>, IEnumerator<TValue>
+	private class RedBlackTEnumerator<TKey> : IEnumerable<TKey> where TKey : IComparable<TKey>
 	{
 		private Stack<RedBlackNode> stack;
-		object IEnumerator.Current => Current;
 
 		public RedBlackTEnumerator(RedBlackNode root)
 		{
@@ -22,12 +21,12 @@ public sealed partial class RedBlackTree<TValue>
 		}
 
 		/// <summary>
-		/// Returns an enumerator that iterates through the elements of the Red-Black Tree in an in-order traversal.
+		/// Returns an enumerator that iterates through the elements of the Red-Black UniversalTree in an in-order traversal.
 		/// </summary>
-		/// <returns>An enumerator that can be used to iterate through the elements of the Red-Black Tree in an in-order traversal.</returns>
+		/// <returns>An enumerator that can be used to iterate through the elements of the Red-Black UniversalTree in an in-order traversal.</returns>
 		public IEnumerator<KeyValuePair<int, TValue>> GetEnumerator()
 		{
-			return new RedBlackTEnumerator(_root);
+			yield return Current;
 		}
 
 		private void TraverseLeft(RedBlackNode node)
@@ -75,6 +74,11 @@ public sealed partial class RedBlackTree<TValue>
 		{
 			stack.Clear();
 			stack = null;
+		}
+
+		IEnumerator<TKey> IEnumerable<TKey>.GetEnumerator()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

@@ -137,7 +137,7 @@ namespace RedBlackTree.Tests
 					_keys.Add(i);
 					//Console.WriteLine($"Insert in List: i={i}, Value={_tree.GetValue(i)}");
 				}
-				//Console.WriteLine($"Insert in Tree: i={i}, Value={_tree.GetValue(i)}");
+				//Console.WriteLine($"Insert in UniversalTree: i={i}, Value={_tree.GetValue(i)}");
 				Console.WriteLine(_tree.ToString(i));
 			}
 			Console.WriteLine("Prepare Data Finished");
@@ -172,7 +172,7 @@ namespace RedBlackTree.Tests
 				}
 				else
 				{
-					Console.WriteLine($"Update Tree: Key={entry.Key}, was in the processList but not in the tree.");
+					Console.WriteLine($"Update UniversalTree: Key={entry.Key}, was in the processList but not in the tree.");
 				}
 				Console.WriteLine(_tree.ToString(entry.Key));
 			}

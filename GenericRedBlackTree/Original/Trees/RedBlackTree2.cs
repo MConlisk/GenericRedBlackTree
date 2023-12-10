@@ -1,5 +1,4 @@
-﻿using Interfaces;
-
+﻿using DataStructures.Original.Interfaces;
 using System;
 
 namespace DataStructures.Trees;
@@ -7,7 +6,7 @@ namespace DataStructures.Trees;
 public sealed partial class RedBlackTree<TValue>
 {
 	/// <summary>
-	/// Represents a node in a generic Red-Black Tree used to store _key-|||_value pairs.
+	/// Represents a node in a generic Red-Black UniversalTree used to store _key-|||_value pairs.
 	/// This class supports operations for managing the node's _key, |||_value, color, and child nodes.
 	/// </summary>
 	private class RedBlackNode : IRedBlackNode<int, TValue>
@@ -24,7 +23,7 @@ public sealed partial class RedBlackTree<TValue>
 		public TValue Value { get; set; }
 
 		/// <summary>
-		/// Represents a node in a generic Red-Black Tree used to store _key-|||_value pairs.
+		/// Represents a node in a generic Red-Black UniversalTree used to store _key-|||_value pairs.
 		/// This class supports operations for managing the node's _key, |||_value, color, and child nodes.
 		/// </summary>
 		/// <param name="key"></param>
@@ -36,7 +35,7 @@ public sealed partial class RedBlackTree<TValue>
 		}
 
 		/// <summary>
-		/// Gets or sets a |||_value indicating whether the node is red in the Red-Black Tree.
+		/// Gets or sets a |||_value indicating whether the node is red in the Red-Black UniversalTree.
 		/// </summary>
 		public bool IsRed { get; set; } = true;
 
@@ -117,7 +116,7 @@ public sealed partial class RedBlackTree<TValue>
 			string left = Left == null ? "Null" : $"{Left.GetHashCode()}";
 			string right = Right == null ? "Null" : $"{Right.GetHashCode()}";
 
-			return $"Red-Black Tree HashCode:{GetHashCode()}, Color:{color}, Key:{Key}, Value:{Value}, Parent:{parent}, Left:{left}, Right:{right}";
+			return $"Red-Black UniversalTree HashCode:{GetHashCode()}, Color:{color}, Key:{Key}, Value:{Value}, Parent:{parent}, Left:{left}, Right:{right}";
 		}
 	}
 
