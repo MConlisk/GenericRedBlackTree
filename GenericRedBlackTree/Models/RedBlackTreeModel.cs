@@ -1,4 +1,5 @@
-﻿using DataStructures.Interfaces;
+﻿using DataStructures.Exceptions;
+using DataStructures.Interfaces;
 using DataStructures.Nodes;
 
 using Factories;
@@ -41,9 +42,11 @@ public class RedBlackTreeModel<TKey, TValue> : ITreeModel<TKey, TValue, RedBlack
         {
             if (!Balancer.AfterInsert(ref _rootNode, newNode))
             {
-                throw new 
+                throw new TreeBalanceException();
             }
-        }
+			return;
+		}
+        throw new InsertTraversalException();
     }
 
 

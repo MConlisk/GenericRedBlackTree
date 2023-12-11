@@ -1,8 +1,6 @@
-﻿using DataStructures.Interfaces;
+﻿using System;
 
-using System;
-
-namespace DataStructures.Nodes;
+namespace DataStructures.Interfaces;
 
 public interface INode<TKey, TValue> where TKey : IComparable<TKey>
 {

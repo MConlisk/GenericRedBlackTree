@@ -49,7 +49,7 @@ public class RedBlackBalancer<TKey, TValue> : IBalancer<TKey, TValue, RedBlackNo
 					RedBlackRotations<TKey, TValue>.
 										// Case 2: Node and parent are not on the same side
 										PerformRotation(startNode, parent, grandparent);
-					parent = (RedBlackNode<TKey, TValue>)startNode.Nodes[0]; // Update parent after rotation
+					parent = (RedBlackNode<TKey, TValue>)startNode.Nodes[0]; // Update parent after rotation, Nodes[0] = Parent Node
 				}
 
 				// Case 3: Node and parent are on the same side
@@ -114,7 +114,7 @@ public class RedBlackBalancer<TKey, TValue> : IBalancer<TKey, TValue, RedBlackNo
 		return false;
 	}
 
-	private bool HandleRedSiblingCase(RedBlackNode<TKey, TValue> parent, RedBlackNode<TKey, TValue> sibling)
+	private static bool HandleRedSiblingCase(RedBlackNode<TKey, TValue> parent, RedBlackNode<TKey, TValue> sibling)
 	{
 		if (sibling != null && sibling.IsRed)
 		{
