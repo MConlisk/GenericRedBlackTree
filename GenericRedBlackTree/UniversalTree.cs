@@ -114,4 +114,18 @@ public class UniversalTree<TKey, TValue> where TKey : IComparable<TKey>
 		return default;
     }
 
+	public virtual IEnumerable<KeyValuePair<TKey, TValue>> GetAll()
+	{
+		if (_index.Count <= 0)
+		{
+			throw new KeyNotFoundException($"GetAll KeyValuePairs in the Tree Failed, The index shows that there are no items in the tree.");
+		}
+		else
+		{
+			foreach(var item in  _treeModel.GetAll())
+			{
+				yield return item;
+			}
+		}
+	}
 }

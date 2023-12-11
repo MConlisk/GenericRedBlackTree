@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <ApplicationIcon>Assets\Logo.ico</ApplicationIcon>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <GenerateDocumentationFile>False</GenerateDocumentationFile>
     <DocumentationFile>D:\Repos\GenericRedBlackTree\GenericRedBlackTree\Documents\Documentation.XML</DocumentationFile>
     <IncludeSymbols>True</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -34,12 +34,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Factories\**" />
+    <Compile Remove="Original\**" />
     <EmbeddedResource Remove="Factories\**" />
+    <EmbeddedResource Remove="Original\**" />
     <None Remove="Factories\**" />
+    <None Remove="Original\**" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Original\Interfaces\IKeyedValues.cs" />
-    <Compile Remove="Original\Interfaces\IRecyclable.cs" />
+    <Compile Remove="Interfaces\IComponent.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Documents\Documentation.XML" />
@@ -69,8 +71,5 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Original\Nodes\" />
   </ItemGroup>
 </Project>

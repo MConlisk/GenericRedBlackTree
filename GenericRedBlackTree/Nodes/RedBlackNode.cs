@@ -1,8 +1,9 @@
 ﻿using System;
+using DataStructures.Interfaces;
 
 namespace DataStructures.Nodes;
 
-public class RedBlackNode<TKey, TValue> : INode<TKey, TValue> where TKey : IComparable<TKey>
+public class RedBlackNode<TKey, TValue> : IRedBlackNode<TKey, TValue> where TKey : IComparable<TKey>
 {
 	private TKey _key;
 	private TValue _value;

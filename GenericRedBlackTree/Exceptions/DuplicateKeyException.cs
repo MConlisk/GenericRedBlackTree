@@ -8,7 +8,7 @@ namespace DataStructures.Exceptions;
 public class DuplicateKeyException : ApplicationException
 {
     private readonly object _duplicateKey;
-
+    private static readonly string _message = "An attempt was made to add a Key to the index when that Key is already indexed.";
     /// <summary>
     /// If provided, this is the Key that caused the Exception.
     /// </summary>
@@ -17,13 +17,13 @@ public class DuplicateKeyException : ApplicationException
     /// <summary>
     /// An attempt was made to add a Key to the index when that Key is already indexed.
     /// </summary>
-    public DuplicateKeyException() : base("An attempt was made to add a Key to the index when that Key is already indexed.") { }
+    public DuplicateKeyException() : base(_message) { }
 
     /// <summary>
     ///  An attempt was made to add a Key to the index when that Key is already indexed.
     /// </summary>
     /// <param name="key"></param>
-    public DuplicateKeyException(object key) : base($"An attempt was made to add this Key: {key} to the index when that Key is already indexed.")
+    public DuplicateKeyException(object key) : base(_message + $"Key:{key}")
     {
         _duplicateKey = key;
     }
