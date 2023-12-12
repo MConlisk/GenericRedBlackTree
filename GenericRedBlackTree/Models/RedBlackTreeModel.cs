@@ -1,4 +1,5 @@
-﻿using DataStructures.Exceptions;
+﻿using DataStructures.Balancers;
+using DataStructures.Exceptions;
 using DataStructures.Interfaces;
 using DataStructures.Nodes;
 
@@ -6,6 +7,8 @@ using Factories;
 
 using System;
 using System.Collections.Generic;
+using System.Xml;
+using System.Xml.Schema;
 
 namespace DataStructures.Models;
 
@@ -16,15 +19,16 @@ public class RedBlackTreeModel<TKey, TValue> : ITreeModel<TKey, TValue, RedBlack
     private readonly ITraverser<TKey, TValue, RedBlackNode<TKey, TValue>> _traverser;
     private readonly IBalancer<TKey, TValue, RedBlackNode<TKey, TValue>> _balancer;
 
-    public RedBlackTreeModel(ITraverser<TKey, TValue, RedBlackNode<TKey, TValue>> traversalComponent)
+    public RedBlackTreeModel(ITraverser<TKey, TValue, RedBlackNode<TKey, TValue>> traverser, RedBlackBalancer<TKey, TValue> balancer)
     {
-        _traverser = traversalComponent;
+        _traverser = traverser;
+        _balancer = balancer;
         _nodeFactory = () => PoolFactory.Create(() => new RedBlackNode<TKey, TValue>());
     }
 
     public bool IsEmpty => _rootNode == null || _rootNode.Value.Equals(default);
-    public INode<TKey, TValue> RootNode => _rootNode;
-    public Func<INode<TKey, TValue>> NodeFactory => _nodeFactory;
+    public RedBlackNode<TKey, TValue> RootNode => _rootNode;
+    public Func<RedBlackNode<TKey, TValue>> NodeFactory => _nodeFactory;
     public ITraverser<TKey, TValue, RedBlackNode<TKey, TValue>> Traverser => _traverser;
     public IBalancer<TKey, TValue, RedBlackNode<TKey, TValue>> Balancer => _balancer;
 
@@ -38,21 +42,29 @@ public class RedBlackTreeModel<TKey, TValue> : ITreeModel<TKey, TValue, RedBlack
         newNode.Nodes = new RedBlackNode<TKey, TValue>[_rootNode.MaxSubNodes];
 
         // Assuming _rootNode is initialized appropriately
-        if (Traverser.InsertNew(_rootNode, newNode))
+        if (_traverser.Insert(_rootNode, newNode))
         {
-            if (!Balancer.AfterInsert(ref _rootNode, newNode))
+            if (!_balancer.AfterInsert(ref _rootNode, newNode))
             {
                 throw new TreeBalanceException();
             }
 			return;
 		}
-        throw new InsertTraversalException();
+        throw new InsertTraversalException(new KeyValuePair<object, object>(key, value));
     }
 
 
     public void Remove(TKey key)
     {
-
+        if(!_traverser.Remove(_rootNode, key))
+        {
+            if (!_balancer.AfterRemoval(ref _rootNode, key))
+            {
+                throw new TreeBalanceException();
+            }
+            return;
+        }
+        throw new RemoveTraversalException(new KeyValuePair<object, object>(key, default));
     }
 
     public void Update(TKey key, TValue value)
@@ -67,7 +79,15 @@ public class RedBlackTreeModel<TKey, TValue> : ITreeModel<TKey, TValue, RedBlack
 
     public IEnumerable<KeyValuePair<TKey, TValue>> GetAll()
     {
-        foreach (var item in Traverser.GetAll((RedBlackNode<TKey, TValue>)_rootNode))
+        foreach (var item in Traverser.GetAll(_rootNode))
+        {
+            yield return item;
+        }
+    }
+
+    public IEnumerable<KeyValuePair<TKey, TValue>> Search(Func<TKey, bool> condition)
+    {
+        foreach (var item in Traverser.Search(_rootNode, condition))
         {
             yield return item;
         }

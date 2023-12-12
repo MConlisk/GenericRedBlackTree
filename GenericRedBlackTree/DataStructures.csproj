@@ -7,17 +7,17 @@
     <IncludeSymbols>True</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <NeutralLanguage>en</NeutralLanguage>
-    <PackageTags>Red-Black Tree, Data Structure, Generic</PackageTags>
+    <PackageTags>Universal Tree,Red-Black Tree, Binary Tree, Data Structure, Data, Tree, Generic</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>Assets\Logo.png</PackageIcon>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <AnalysisLevel>6.0-recommended</AnalysisLevel>
     <RepositoryUrl>https://github.com/MConlisk/Red-Black-Tree</RepositoryUrl>
     <PackageProjectUrl>https://github.com/MConlisk/Red-Black-Tree</PackageProjectUrl>
-    <Description>This is a Red-Black Tree made with the intentions of using it in Data-Oriented ECS Game Engine.. It is a Tree Data Structure that stores a Key Value Pair in which the Key is an int and the Value is Generic.</Description>
+    <Description>This is a Tree structure that has been deconstructed into modular components, By adding a Model, Node and Traverser of compatible types, you can have any tree needed. Additionally, there are Balancers for tree structures that need to balance.</Description>
     <Authors>Matthew Conlisk</Authors>
     <Company>ScrewApple</Company>
-    <Title>Generic Red-Black Tree</Title>
+    <Title>Universal Tree</Title>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <SignAssembly>False</SignAssembly>
     <DelaySign>False</DelaySign>
@@ -25,6 +25,9 @@
     <BaseOutputPath>D:\Repos\GenericRedBlackTree\GenericRedBlackTree\bin</BaseOutputPath>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageReleaseNotes>In the current version the Universal tree can be made into a Red-Black Tree. I will continue to add more Tree styles as time permits. The next tree I think I will be adding is a Quad Tree, and or a binary tree. Feel free to contact me if you need a certain type.</PackageReleaseNotes>
+    <FileVersion>1.0.0.0</FileVersion>
+    <AssemblyName>UniversalTree</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>

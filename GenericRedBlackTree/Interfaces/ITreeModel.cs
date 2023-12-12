@@ -15,12 +15,13 @@ public interface ITreeModel<TKey, TValue, TNode> where TKey : IComparable<TKey> 
 	bool IsEmpty { get; }
 	IBalancer<TKey, TValue, TNode> Balancer { get; }
 	ITraverser<TKey, TValue, TNode> Traverser { get; }
-	INode<TKey, TValue> RootNode { get; }
-	Func<INode<TKey, TValue>> NodeFactory { get; }
+	TNode RootNode { get; }
+	Func<TNode> NodeFactory { get; }
 
     void Insert(TKey key, TValue value);
 	void Update(TKey key, TValue value);
 	void Remove(TKey key);
 	TValue GetValue(TKey key);
 	IEnumerable<KeyValuePair<TKey, TValue>> GetAll();
+	IEnumerable<KeyValuePair<TKey, TValue>> Search(Func<TKey, bool> condition);
 }

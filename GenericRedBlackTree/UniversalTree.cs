@@ -23,12 +23,12 @@ public class UniversalTree<TKey, TValue> where TKey : IComparable<TKey>
     private readonly bool _acceptsDuplicateKeys;
     private readonly int _maxCapacity;
 
-    private readonly ITreeModel<TKey, TValue> _treeModel;
+    private readonly ITreeModel<TKey, TValue, INode<TKey, TValue>> _treeModel;
     private readonly List<TKey> _index;
 
-    public UniversalTree(ITreeModel<TKey, TValue> treeModel) : this(treeModel, false, 0) { }
-    public UniversalTree(ITreeModel<TKey, TValue> treeModel, bool acceptDuplicateKeys) : this(treeModel, acceptDuplicateKeys, 0) { }
-    public UniversalTree(ITreeModel<TKey, TValue> treeModel, bool acceptDuplicateKeys, int maxCapacity)
+    public UniversalTree(ITreeModel<TKey, TValue, INode<TKey, TValue>> treeModel) : this(treeModel, false, 0) { }
+    public UniversalTree(ITreeModel<TKey, TValue, INode<TKey, TValue>> treeModel, bool acceptDuplicateKeys) : this(treeModel, acceptDuplicateKeys, 0) { }
+    public UniversalTree(ITreeModel<TKey, TValue, INode<TKey, TValue>> treeModel, bool acceptDuplicateKeys, int maxCapacity)
 	{
         _maxCapacity = maxCapacity;
         _acceptsDuplicateKeys = acceptDuplicateKeys;
@@ -41,7 +41,6 @@ public class UniversalTree<TKey, TValue> where TKey : IComparable<TKey>
     public int Count => _index.Count;
     public bool Contains(TKey key) => _index.Contains(key);
     public bool IsEmpty => _treeModel.IsEmpty;
-
 
 	/// <summary>
 	/// The Entrance point to Insert a new KeyValuePair object into the tree. 
@@ -109,9 +108,8 @@ public class UniversalTree<TKey, TValue> where TKey : IComparable<TKey>
 		}
 		else
 		{
-			_treeModel.GetValue(key);
+			return _treeModel.GetValue(key);
 		}
-		return default;
     }
 
 	public virtual IEnumerable<KeyValuePair<TKey, TValue>> GetAll()
@@ -123,6 +121,21 @@ public class UniversalTree<TKey, TValue> where TKey : IComparable<TKey>
 		else
 		{
 			foreach(var item in  _treeModel.GetAll())
+			{
+				yield return item;
+			}
+		}
+	}
+
+	public virtual IEnumerable<KeyValuePair<TKey, TValue>> Search(Func<TKey, bool> condition)
+	{
+		if (_index.Count <= 0)
+		{
+			throw new KeyNotFoundException($"Unable to Search the Tree, The index shows that there are no items in the tree.");
+		}
+		else
+		{
+			foreach (var item in _treeModel.Search(condition))
 			{
 				yield return item;
 			}

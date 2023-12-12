@@ -1,21 +1,37 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace DataStructures.Exceptions;
 
 public class InsertTraversalException : ApplicationException
 {
-	private static readonly string _message = "An attempt was made to insert a KeyValuePair into the tree, but failed to an unknown reason.";
+	private readonly object _key;
+	private readonly object _value;
+	private static readonly string _message = "An attempt to insert a KeyValuePair into the tree was unsuccessful.";
+
+	public KeyValuePair<object, object> KeyValuePair { get => new(_key, _value); }
 
 	/// <summary>
-	/// An attempt was made to Balance the tree, but failed to an unknown error.
+	/// An attempt to insert a KeyValuePair into the tree was unsuccessful.
 	/// </summary>
-	public InsertTraversalException() : base(_message) { }
+	public InsertTraversalException() : this(_message, new InvalidOperationException(), default) { }
+
+	/// <param name="keyValuePair"></param>
+	public InsertTraversalException(KeyValuePair<object, object> keyValuePair) : this(_message, new InvalidOperationException(), keyValuePair) { }
 
 	/// <param name="message"></param>
-	public InsertTraversalException(string message) : base(message) { }
+	public InsertTraversalException(string message) : this(message, new InvalidOperationException(), default) { }
+
+	/// <param name="message"></param>
+	/// <param name="keyValuePair"></param>
+	public InsertTraversalException(string message, KeyValuePair<object, object> keyValuePair) : this(message, new InvalidOperationException(),  keyValuePair) { }
+	
+	/// <param name="message"></param>
+	/// <param name="innerException"></param>
+	public InsertTraversalException(string message, Exception innerException) : this(message, innerException, default) { }
 
 	/// <param name="message"></param>
 	/// <param name="innerException"></param>
-	public InsertTraversalException(string message, Exception innerException) : base(message, innerException) { }
-
+	/// <param name="keyValuePair"></param>
+	public InsertTraversalException(string message, Exception innerException, KeyValuePair<object, object> keyValuePair) : base(message, innerException) { _key = keyValuePair.Key; _value = keyValuePair.Value; }
 }

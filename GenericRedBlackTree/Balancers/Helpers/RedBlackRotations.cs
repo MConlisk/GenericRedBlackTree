@@ -2,8 +2,8 @@
 
 using System;
 
-namespace DataStructures.Balancers.Helpers
-{
+namespace DataStructures.Balancers.Helpers;
+
     internal static class RedBlackRotations<TKey, TValue> where TKey : IComparable<TKey>
     {
 
@@ -29,19 +29,18 @@ namespace DataStructures.Balancers.Helpers
         internal static void RotateLeft(RedBlackNode<TKey, TValue> pivot, RedBlackNode<TKey, TValue> grandparent)
         {
             grandparent.Nodes[2] = pivot.Nodes[1]; // Nodes[1] = Left Node, Nodes[2] = Right Node
-			pivot.Nodes[1] = grandparent; // Nodes[1] = Left Node
+		pivot.Nodes[1] = grandparent; // Nodes[1] = Left Node
 
-			pivot.IsRed = false;
+		pivot.IsRed = false;
             grandparent.IsRed = true;
         }
 
         internal static void RotateRight(RedBlackNode<TKey, TValue> pivot, RedBlackNode<TKey, TValue> grandparent)
         {
             grandparent.Nodes[1] = pivot.Nodes[0]; // Nodes[1] = Left Node, Nodes[0] = Parent Node
-			pivot.Nodes[0] = grandparent; // Nodes[0] = Parent Node
+		pivot.Nodes[0] = grandparent; // Nodes[0] = Parent Node
 
-			pivot.IsRed = false;
+		pivot.IsRed = false;
             grandparent.IsRed = true;
         }
     }
-}
