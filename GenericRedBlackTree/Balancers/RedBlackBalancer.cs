@@ -12,7 +12,7 @@ public class RedBlackBalancer<TKey, TValue> : IBalancer<TKey, TValue, RedBlackNo
 	{
 
 		// Assuming nodeToInsert is always marked as red after insertion
-		if (currentNode == null || !currentNode.IsRed)
+		if (currentNode is null || !currentNode.IsRed)
 		{
 			// No need to rebalance if the current node is black or null
 			return false;
@@ -21,7 +21,7 @@ public class RedBlackBalancer<TKey, TValue> : IBalancer<TKey, TValue, RedBlackNo
 		RedBlackNode<TKey, TValue> parentNode = RedBlackFamilyHandling<TKey, TValue>.GetParent(currentNode);
 		RedBlackNode<TKey, TValue> grandparent = RedBlackFamilyHandling<TKey, TValue>.GetParent(parentNode);
 
-		if (parentNode == null)
+		if (parentNode is null)
 		{
 			// Parent is null, meaning currentNode is the root
 			currentNode.IsRed = false; // Ensure the root is black
@@ -46,9 +46,8 @@ public class RedBlackBalancer<TKey, TValue> : IBalancer<TKey, TValue, RedBlackNo
 				// Cases 2 and 3: Parent is red, but Uncle is black or null
 				if (RedBlackFamilyHandling<TKey, TValue>.IsLeftChild(parentNode, grandparent) != RedBlackFamilyHandling<TKey, TValue>.IsLeftChild(currentNode, parentNode))
 				{
-					RedBlackRotations<TKey, TValue>.
-										// Case 2: Nodes and parentNode are not on the same side
-										PerformRotation(currentNode, parentNode, grandparent);
+					// Case 2: Nodes and parentNode are not on the same side
+					RedBlackRotations<TKey, TValue>.PerformRotation(currentNode, parentNode, grandparent);
 					parentNode = (RedBlackNode<TKey, TValue>)currentNode.Nodes["Parent"]; // Update parentNode after rotation, Nodes[0] = Parent Nodes
 				}
 
@@ -72,14 +71,14 @@ public class RedBlackBalancer<TKey, TValue> : IBalancer<TKey, TValue, RedBlackNo
 
 	public bool AfterRemoval(ref RedBlackNode<TKey, TValue> currentNode, TKey removedKey)
 	{
-		if (currentNode == null)
+		if (currentNode is null)
 		{
 			return false;
 		}
 
 		var replacementNode = DetermineReplacementNode(FindNodeToRemove(currentNode, removedKey));
 
-		if (replacementNode != null && replacementNode.IsRed)
+		if (replacementNode is not null && replacementNode.IsRed)
 		{
 			replacementNode.IsRed = false;
 			return true;
@@ -88,7 +87,7 @@ public class RedBlackBalancer<TKey, TValue> : IBalancer<TKey, TValue, RedBlackNo
 		RedBlackNode<TKey, TValue> parentNode = RedBlackFamilyHandling<TKey, TValue>.GetParent(currentNode);
 		bool isLeftChild = RedBlackFamilyHandling<TKey, TValue>.IsLeftChild(currentNode, parentNode);
 
-		if (parentNode == null)
+		if (parentNode is null)
 		{
 			return false;
 		}
@@ -108,7 +107,6 @@ public class RedBlackBalancer<TKey, TValue> : IBalancer<TKey, TValue, RedBlackNo
 		}
 
 		RedBlackFamilyHandling<TKey, TValue>.HandleBlackSiblingLeftNephewRedCase(ref parentNode, isLeftChild);
-
 		RedBlackFamilyHandling<TKey, TValue>.HandleBlackSiblingRightNephewRedCase(sibling, rightNephew, parentNode, isLeftChild);
 
 		return false;
@@ -116,16 +114,16 @@ public class RedBlackBalancer<TKey, TValue> : IBalancer<TKey, TValue, RedBlackNo
 
 	private bool HandleBlackSiblingCase(RedBlackNode<TKey, TValue> parentNode, RedBlackNode<TKey, TValue> sibling, RedBlackNode<TKey, TValue> leftNephew, RedBlackNode<TKey, TValue> rightNephew)
 	{
-		if (sibling != null && !sibling.IsRed && (leftNephew == null || !leftNephew.IsRed) && (rightNephew == null || !rightNephew.IsRed))
+		if (sibling is not null && !sibling.IsRed && (leftNephew is null || !leftNephew.IsRed) && (rightNephew is null || !rightNephew.IsRed))
 		{
 			sibling.IsRed = true;
 			return AfterRemoval(ref parentNode, default);
 		}
 
-		if (parentNode.IsRed && (sibling == null || !sibling.IsRed) && (leftNephew == null || !leftNephew.IsRed) && (rightNephew == null || !rightNephew.IsRed))
+		if (parentNode.IsRed && (sibling is null || !sibling.IsRed) && (leftNephew is null || !leftNephew.IsRed) && (rightNephew is null || !rightNephew.IsRed))
 		{
 			parentNode.IsRed = false;
-			if (sibling != null) sibling.IsRed = true;
+			if (sibling is not null) sibling.IsRed = true;
 			return true;
 		}
 
@@ -134,11 +132,11 @@ public class RedBlackBalancer<TKey, TValue> : IBalancer<TKey, TValue, RedBlackNo
 	private static RedBlackNode<TKey, TValue> FindNodeToRemove(RedBlackNode<TKey, TValue> currentNode, TKey removedKey)
 	{
 		// Perform a search operation to find the node with the specified key
-		while (currentNode != null)
+		while (currentNode is not null)
 		{
 			int comparisonResult = removedKey.CompareTo(currentNode.Key);
 
-			if (comparisonResult == 0)
+			if (comparisonResult is 0)
 			{
 				// Nodes with the specified key found
 				return currentNode;
@@ -159,7 +157,7 @@ public class RedBlackBalancer<TKey, TValue> : IBalancer<TKey, TValue, RedBlackNo
 
 	private static RedBlackNode<TKey, TValue> DetermineReplacementNode(RedBlackNode<TKey, TValue> nodeToRemove)
 	{
-		if (nodeToRemove.Nodes["Left"] != null && nodeToRemove.Nodes["Right"] != null)
+		if (nodeToRemove.Nodes["Left"] is not null && nodeToRemove.Nodes["Right"] != null)
 		{
 			// Nodes has two children, find the in-order successor
 			return FindSuccessor((RedBlackNode<TKey, TValue>)nodeToRemove.Nodes["Right"]);
@@ -174,7 +172,7 @@ public class RedBlackBalancer<TKey, TValue> : IBalancer<TKey, TValue, RedBlackNo
 	private static RedBlackNode<TKey, TValue> FindSuccessor(RedBlackNode<TKey, TValue> node)
 	{
 		// Find the leftmost node in the right subtree
-		while (node.Nodes["Left"] != null)
+		while (node.Nodes["Left"] is not null)
 		{
 			node = (RedBlackNode<TKey, TValue>)node.Nodes["Left"];
 		}
@@ -183,7 +181,7 @@ public class RedBlackBalancer<TKey, TValue> : IBalancer<TKey, TValue, RedBlackNo
 
 	private static bool HandleRedSiblingCase(RedBlackNode<TKey, TValue> parentNode, RedBlackNode<TKey, TValue> sibling)
 	{
-		if (sibling != null && sibling.IsRed)
+		if (sibling is not null && sibling.IsRed)
 		{
 			parentNode.IsRed = true;
 			sibling.IsRed = false;

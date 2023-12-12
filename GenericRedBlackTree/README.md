@@ -1,23 +1,33 @@
 ![Screw Apple Logo](/Assets/Logo.png)
-Red-Black Tree Documentation
+# Universal Tree Implementation in C# with GenericFactoryPool
 
-Introduction:
+## Overview
 
-The Red-Black Tree is a self-balancing binary search tree that maintains balance by ensuring that the height of the tree is always logarithmic. It achieves this by applying specific rules to the tree structure and performing rotations when necessary. By understanding the structure and functionality of a Red-Black Tree, you can leverage its self-balancing properties to efficiently store and retrieve key-value pairs.
+This project is an implementation of a universal tree data structure in C# using the GenericFactoryPool NuGet package. The universal tree model provides a foundation for various tree structures, with the current focus on a Red-Black Tree implementation.
 
+## Purpose
 
-Code Highlights
+The primary purpose of this implementation is to create a flexible and extensible tree structure capable of supporting different tree types. The current version includes a Red-Black Tree model, and future updates will introduce additional tree implementations.
 
-GenericRedBlackTree<TValue>:
+## Features
 
-The GenericRedBlackTree<TValue> class represents a Red-Black Tree with a generic value type. It implements the IGenericRedBlackTree<TValue> interface. Here is the code to generate the class:
+- **Universal Tree Model:** The core implementation of a tree structure with generic operations suitable for various tree types.
 
-GenericNode<TValue>:
+- **Red-Black Tree Model:** An example implementation utilizing the universal tree model, providing methods for insertion, deletion, and retrieval of key-value pairs.
 
-The GenericNode<TValue> class represents a node in a generic Red-Black Tree used to store key-value pairs. It implements the IGenericRedBlackNode<int, TValue> interface. 
+- **Balancing Mechanism:** The Red-Black Tree incorporates a balancing mechanism to ensure that the tree remains balanced after insertions and deletions.
 
+- **Traversing Functionality:** Enables traversal of the tree to retrieve all key-value pairs or those meeting specific conditions.
 
-Conclusion:
+- **Exception Handling:** Custom exceptions like `DuplicateKeyException`, `InsertTraversalException`, `RemoveTraversalException`, and `TreeBalanceException` provide meaningful error messages for better debugging.
 
-In this documentation, we have explored the implementation of a Red-Black Tree in C# using the Markdown language. We have covered the main classes and methods involved in working with a Red-Black Tree. The GenericRedBlackTree<TValue> class represents the Red-Black Tree itself, while the GenericNode<TValue> class represents the nodes within the tree.
+## How to Use
 
+### 1. Initialization
+
+```csharp
+// Example of initializing the Universal Tree
+var rbtBalancer = new RedBlackBlancer();
+var rbtTraverser = new RedBlackInOrderTraverser();
+var rbtModel = new RedBlackTreeModel(rbtTraverser, rbtBalancer)
+var universalTree = new UniversalTree<int, string>();

@@ -1,4 +1,5 @@
-﻿using DataStructures.Interfaces;
+﻿using DataStructures.Balancers;
+using DataStructures.Interfaces;
 using DataStructures.Nodes;
 
 using Factories;
@@ -20,7 +21,7 @@ public class RedBlackInOrderTraverser<TKey, TValue> : ITraverser<TKey, TValue, R
 
 		RedBlackNode<TKey, TValue> parentNode = null;
 
-		while (currentNode != null)
+		while (currentNode is not null)
 		{
 			parentNode = currentNode;
 			if (nodeToInsert.Key.CompareTo(currentNode.Key) < 0)

@@ -16,7 +16,7 @@ public interface ITreeModel<TKey, TValue, TNode> where TKey : IComparable<TKey> 
 	IBalancer<TKey, TValue, TNode> Balancer { get; }
 	ITraverser<TKey, TValue, TNode> Traverser { get; }
 	TNode RootNode { get; }
-	Func<TNode> NodeFactory { get; }
+	Func<TKey, TValue, TNode> NodeFactory { get; }
 
     void Insert(TKey key, TValue value);
 	void Update(TKey key, TValue value);

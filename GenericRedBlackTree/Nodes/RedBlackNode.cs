@@ -12,20 +12,18 @@ public class RedBlackNode<TKey, TValue> : IRedBlackNode<TKey, TValue> where TKey
 	private bool _isRed;
 	private Dictionary<string, INode<TKey, TValue>> _nodes;
 
-	public int MaxSubNodes => 4; 
+	public int MaxSubNodes => 4;
 	public TKey Key { get => _key; set => _key = value; }
 	public TValue Value { get => _value; set => _value = value; }
 	public bool IsRed { get => _isRed; set => _isRed = value; }
 	public Dictionary<string, INode<TKey, TValue>> Nodes { get => _nodes; set => _nodes = value; }
 
-	public RedBlackNode()
+	public RedBlackNode() : this(default, default) { }
+	public RedBlackNode(TKey key, TValue value) 
 	{
-		_nodes = new Dictionary<string, INode<TKey, TValue>>
-		{
-			{ "Parent", default },
-			{ "Left", default },
-			{ "Right", default }
-		};
+		ResetState();
+		_key = key;
+		_value = value;
 	}
 
 	public void ResetState()
@@ -44,7 +42,7 @@ public class RedBlackNode<TKey, TValue> : IRedBlackNode<TKey, TValue> where TKey
 			{ "Left", default },
 			{ "Right", default }
 		};
-
+		IsRed = true;
 	}
 
 }

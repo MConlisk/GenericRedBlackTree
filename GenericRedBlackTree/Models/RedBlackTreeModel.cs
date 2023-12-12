@@ -7,40 +7,39 @@ using Factories;
 
 using System;
 using System.Collections.Generic;
-using System.Xml;
-using System.Xml.Schema;
 
 namespace DataStructures.Models;
 
 public class RedBlackTreeModel<TKey, TValue> : ITreeModel<TKey, TValue, RedBlackNode<TKey, TValue>> where TKey : IComparable<TKey>
 {
     private RedBlackNode<TKey, TValue> _rootNode;
-    private readonly Func<RedBlackNode<TKey, TValue>> _nodeFactory;
+    private readonly Func<TKey, TValue, RedBlackNode<TKey, TValue>> _nodeFactory;
     private readonly ITraverser<TKey, TValue, RedBlackNode<TKey, TValue>> _traverser;
     private readonly IBalancer<TKey, TValue, RedBlackNode<TKey, TValue>> _balancer;
 
-    public RedBlackTreeModel(ITraverser<TKey, TValue, RedBlackNode<TKey, TValue>> traverser, RedBlackBalancer<TKey, TValue> balancer)
+    public RedBlackTreeModel(ITraverser<TKey, TValue, RedBlackNode<TKey, TValue>> traverser, IBalancer<TKey, TValue, RedBlackNode<TKey,TValue>> balancer)
     {
         _traverser = traverser;
         _balancer = balancer;
-        _nodeFactory = () => PoolFactory.Create(() => new RedBlackNode<TKey, TValue>());
+        _nodeFactory = (key, value) => PoolFactory.Create(() => new RedBlackNode<TKey, TValue>(key, value));
     }
 
-    public bool IsEmpty => _rootNode == null || _rootNode.Value.Equals(default);
+    public bool IsEmpty => _rootNode is null || _rootNode.Value.Equals(default);
     public RedBlackNode<TKey, TValue> RootNode => _rootNode;
-    public Func<RedBlackNode<TKey, TValue>> NodeFactory => _nodeFactory;
+    public Func<TKey, TValue, RedBlackNode<TKey, TValue>> NodeFactory => _nodeFactory;
     public ITraverser<TKey, TValue, RedBlackNode<TKey, TValue>> Traverser => _traverser;
     public IBalancer<TKey, TValue, RedBlackNode<TKey, TValue>> Balancer => _balancer;
 
 	public void Insert(TKey key, TValue value)
     {
-        var nodeToInsert = _nodeFactory();
+        var nodeToInsert = _nodeFactory(key, value);
 
-        nodeToInsert.Key = key;
-        nodeToInsert.Value = value;
-        nodeToInsert.IsRed = true;
-
-		// Assuming _rootNode is initialized appropriately
+        if (_rootNode is null)
+        {
+            _rootNode = nodeToInsert;
+            return;
+        }
+        
 		if (_traverser.Insert(ref _rootNode, nodeToInsert))
         {
             if (!_balancer.AfterInsert(ref _rootNode, nodeToInsert))
