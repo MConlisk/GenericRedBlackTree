@@ -18,55 +18,55 @@ internal static class RedBlackFamilyHandling<TKey, TValue> where TKey : ICompara
 
 	internal static RedBlackNode<TKey, TValue> GetLeftChild(RedBlackNode<TKey, TValue> node)
 	{
-		return node?.Nodes[1] as RedBlackNode<TKey, TValue>; // Nodes[1] = Left Node
+		return node?.Nodes["Left"] as RedBlackNode<TKey, TValue>; // Nodes[1] = Left Nodes
 	}
 
 	internal static RedBlackNode<TKey, TValue> GetParent(RedBlackNode<TKey, TValue> node)
 	{
-		return node?.Nodes[0] as RedBlackNode<TKey, TValue>; // Nodes[0] = Parent Node
+		return node?.Nodes["Parent"] as RedBlackNode<TKey, TValue>; // Nodes[0] = Parent Nodes
 	}
 
 	internal static RedBlackNode<TKey, TValue> GetRightChild(RedBlackNode<TKey, TValue> node)
 	{
-		return node?.Nodes[2] as RedBlackNode<TKey, TValue>; // Nodes[2] = Right Node
+		return node?.Nodes["Right"] as RedBlackNode<TKey, TValue>; // Nodes[2] = Right Nodes
 	}
 
-	internal static RedBlackNode<TKey, TValue> GetSibling(RedBlackNode<TKey, TValue> parent, bool isLeftChild)
+	internal static RedBlackNode<TKey, TValue> GetSibling(RedBlackNode<TKey, TValue> parentNode, bool isLeftChild)
 	{
 		if (isLeftChild)
 		{
-			return parent.Nodes[2] as RedBlackNode<TKey, TValue>; // Nodes[2] = Right Node
+			return parentNode.Nodes["Right"] as RedBlackNode<TKey, TValue>; // Nodes[2] = Right Nodes
 		}
 		else
 		{
-			return parent.Nodes[1] as RedBlackNode<TKey, TValue>; // Nodes[1] = Left Node
+			return parentNode.Nodes["Left"] as RedBlackNode<TKey, TValue>; // Nodes[1] = Left Nodes
 		}
 	}
 
-	internal static RedBlackNode<TKey, TValue> GetUncle(RedBlackNode<TKey, TValue> parent, RedBlackNode<TKey, TValue> grandparent)
+	internal static RedBlackNode<TKey, TValue> GetUncle(RedBlackNode<TKey, TValue> parentNode, RedBlackNode<TKey, TValue> grandparent)
 	{
-		return IsLeftChild(parent, grandparent) ? grandparent.Nodes[2] as RedBlackNode<TKey, TValue> : grandparent.Nodes[1] as RedBlackNode<TKey, TValue>; // Nodes[1] = Left Node, Nodes[2] = Right Node
+		return IsLeftChild(parentNode, grandparent) ? grandparent.Nodes["Right"] as RedBlackNode<TKey, TValue> : grandparent.Nodes["Left"] as RedBlackNode<TKey, TValue>; // Nodes[1] = Left Nodes, Nodes[2] = Right Nodes
 	}
 
-	internal static bool HandleBlackSiblingLeftNephewRedCase(ref RedBlackNode<TKey, TValue> parent, bool isLeftChild)
+	internal static bool HandleBlackSiblingLeftNephewRedCase(ref RedBlackNode<TKey, TValue> parentNode, bool isLeftChild)
 	{
-		RedBlackNode<TKey, TValue> sibling = GetSibling(GetGrandparent(parent), isLeftChild);
-		RedBlackNode<TKey, TValue> leftNephew = (RedBlackNode<TKey, TValue>)sibling?.Nodes[1]; // Nodes[1] = Left Node
+		RedBlackNode<TKey, TValue> sibling = GetSibling(GetGrandparent(parentNode), isLeftChild);
+		RedBlackNode<TKey, TValue> leftNephew = (RedBlackNode<TKey, TValue>)sibling?.Nodes["Left"]; // Nodes[1] = Left Nodes
 
 		if (sibling != null && !sibling.IsRed && leftNephew != null && leftNephew.IsRed)
 		{
-			sibling.IsRed = parent.IsRed;
-			parent.IsRed = false;
+			sibling.IsRed = parentNode.IsRed;
+			parentNode.IsRed = false;
 			leftNephew.IsRed = false;
-			RedBlackRotations<TKey, TValue>.PerformRotation(leftNephew, sibling, parent);
+			RedBlackRotations<TKey, TValue>.PerformRotation(leftNephew, sibling, parentNode);
 
 			if (isLeftChild)
 			{
-				parent.Nodes[2] = sibling; // Nodes[2] = Right Node
+				parentNode.Nodes["Right"] = sibling; // Nodes[2] = Right Nodes
 			}
 			else
 			{
-				parent.Nodes[1] = sibling; // Nodes[1] = Left Node
+				parentNode.Nodes["Left"] = sibling; // Nodes[1] = Left Nodes
 			}
 
 			return true;
@@ -75,21 +75,21 @@ internal static class RedBlackFamilyHandling<TKey, TValue> where TKey : ICompara
 		return false;
 	}
 
-	internal static bool HandleBlackSiblingRightNephewRedCase(RedBlackNode<TKey, TValue> sibling, RedBlackNode<TKey, TValue> rightNephew, RedBlackNode<TKey, TValue> parent, bool isLeftChild)
+	internal static bool HandleBlackSiblingRightNephewRedCase(RedBlackNode<TKey, TValue> sibling, RedBlackNode<TKey, TValue> rightNephew, RedBlackNode<TKey, TValue> parentNode, bool isLeftChild)
 	{
 		if (sibling != null && !sibling.IsRed && rightNephew != null && rightNephew.IsRed)
 		{
-			sibling.IsRed = parent.IsRed;
-			parent.IsRed = false;
+			sibling.IsRed = parentNode.IsRed;
+			parentNode.IsRed = false;
 			rightNephew.IsRed = false;
 
 			if (isLeftChild)
 			{
-				RedBlackRotations<TKey, TValue>.RotateRight(rightNephew, parent);
+				RedBlackRotations<TKey, TValue>.RotateRight(rightNephew, parentNode);
 			}
 			else
 			{
-				RedBlackRotations<TKey, TValue>.RotateLeft(rightNephew, GetGrandparent(parent));
+				RedBlackRotations<TKey, TValue>.RotateLeft(rightNephew, GetGrandparent(parentNode));
 			}
 
 			return true;
@@ -98,8 +98,8 @@ internal static class RedBlackFamilyHandling<TKey, TValue> where TKey : ICompara
 		return false;
 	}
 
-	internal static bool IsLeftChild(RedBlackNode<TKey, TValue> node, RedBlackNode<TKey, TValue> parent)
+	internal static bool IsLeftChild(RedBlackNode<TKey, TValue> node, RedBlackNode<TKey, TValue> parentNode)
 	{
-		return parent != null && parent.Nodes[1] == node; // Nodes[1] = Left Node
+		return parentNode != null && parentNode.Nodes["Left"] == node; // Nodes[1] = Left Nodes
 	}
 }

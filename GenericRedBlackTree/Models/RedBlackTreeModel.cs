@@ -34,17 +34,16 @@ public class RedBlackTreeModel<TKey, TValue> : ITreeModel<TKey, TValue, RedBlack
 
 	public void Insert(TKey key, TValue value)
     {
-        var newNode = _nodeFactory();
+        var nodeToInsert = _nodeFactory();
 
-        newNode.Key = key;
-        newNode.Value = value;
-        newNode.IsRed = true;
-        newNode.Nodes = new RedBlackNode<TKey, TValue>[_rootNode.MaxSubNodes];
+        nodeToInsert.Key = key;
+        nodeToInsert.Value = value;
+        nodeToInsert.IsRed = true;
 
-        // Assuming _rootNode is initialized appropriately
-        if (_traverser.Insert(_rootNode, newNode))
+		// Assuming _rootNode is initialized appropriately
+		if (_traverser.Insert(ref _rootNode, nodeToInsert))
         {
-            if (!_balancer.AfterInsert(ref _rootNode, newNode))
+            if (!_balancer.AfterInsert(ref _rootNode, nodeToInsert))
             {
                 throw new TreeBalanceException();
             }
@@ -56,7 +55,7 @@ public class RedBlackTreeModel<TKey, TValue> : ITreeModel<TKey, TValue, RedBlack
 
     public void Remove(TKey key)
     {
-        if(!_traverser.Remove(_rootNode, key))
+        if(!_traverser.Remove(ref _rootNode, key))
         {
             if (!_balancer.AfterRemoval(ref _rootNode, key))
             {

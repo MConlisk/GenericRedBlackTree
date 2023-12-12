@@ -4,6 +4,6 @@ namespace DataStructures.Interfaces;
 
 public interface IBalancer<TKey, TValue, TNode> where TKey : IComparable<TKey> where TNode : INode<TKey, TValue>
 {
-	bool AfterInsert(ref TNode startNode, TNode newNode);
-	bool AfterRemoval(ref TNode startNode, TKey removedKey);
+	bool AfterInsert(ref TNode currentNode, TNode nodeToInsert);
+	bool AfterRemoval(ref TNode currentNode, TKey removedKey);
 }

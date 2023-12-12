@@ -11,7 +11,7 @@ namespace DataStructures;
 /// <summary>
 /// The Universal Tree is a Tree Structure that can take on the shape of any tree you need it to.
 /// By providing a Tree Model you essentially made the tree into that type of Data Structure.
-/// This Tree Model takes a Traversal Component, a Node type and a Balancing Component.
+/// This Tree Model takes a Traversal Component, a Nodes type and a Balancing Component.
 /// How the model interacts with the data all depends on the different pieces you have decided to add.
 /// Additionally, this Tree Structure being as versatile, The KeyValuePair this stores uses generic TKey, and TValue types.
 /// And to top it off, The creation and destruction of nodes in this structure is handled by my PoolFactory to further it's performance.

@@ -1,96 +1,144 @@
 ﻿using DataStructures.Interfaces;
 using DataStructures.Nodes;
 
+using Factories;
+
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace DataStructures.Traversers;
 
-// Example Traversal Component implementation
 public class RedBlackInOrderTraverser<TKey, TValue> : ITraverser<TKey, TValue, RedBlackNode<TKey, TValue>> where TKey : IComparable<TKey>
 {
-	public bool Insert(RedBlackNode<TKey, TValue> startNode, RedBlackNode<TKey, TValue> newNode)
+	public bool Insert(ref RedBlackNode<TKey, TValue> currentNode, RedBlackNode<TKey, TValue> nodeToInsert)
 	{
-		RedBlackNode<TKey, TValue> parent = null;
-
-		while (startNode != null)
+		if (currentNode is null)
 		{
-			parent = startNode;
+			return false;
+		}
 
-			if (newNode.Key.CompareTo(startNode.Key) < 0)
+		RedBlackNode<TKey, TValue> parentNode = null;
+
+		while (currentNode != null)
+		{
+			parentNode = currentNode;
+			if (nodeToInsert.Key.CompareTo(currentNode.Key) < 0)
 			{
-				startNode = (RedBlackNode<TKey, TValue>)startNode.Nodes[1]; // Nodes[1] Left child
+				currentNode = (RedBlackNode<TKey, TValue>)currentNode.Nodes["Left"];
 			}
 			else
 			{
-				startNode = (RedBlackNode<TKey, TValue>)startNode.Nodes[2];  // Nodes[2] Right child
+				currentNode = (RedBlackNode<TKey, TValue>)currentNode.Nodes["Right"];
 			}
 		}
 
-		newNode.Nodes[0] = parent; // Nodes[0] parent node
+		nodeToInsert.Nodes["Parent"] = parentNode;
 
-		if (parent == null)
+		if (parentNode is null)
 		{
-			parent.Nodes[0] = newNode; // Nodes[0] parent node
+			currentNode = nodeToInsert;
 			return true;
 		}
 
-		parent.Nodes ??= new RedBlackNode<TKey, TValue>[parent.MaxSubNodes]; // initialize Nodes
-
-		if (newNode.Key.CompareTo(parent.Key) < 0)
+		if (nodeToInsert.Key.CompareTo(parentNode.Key) < 0)
 		{
-			parent.Nodes[1] = newNode; // Nodes[1] Left child
+			parentNode.Nodes["Left"] = nodeToInsert;
 			return true;
 		}
 		else
 		{
-			parent.Nodes[2] = newNode;  // Nodes[2] Right child
+			parentNode.Nodes["Right"] = nodeToInsert;
 			return true;
 		}
-
 	}
 
-	public IEnumerable<KeyValuePair<TKey, TValue>> GetAll(RedBlackNode<TKey, TValue> startNode)
+	public IEnumerable<KeyValuePair<TKey, TValue>> GetAll(RedBlackNode<TKey, TValue> currentNode)
 	{
-		while (startNode != null)
+		if (currentNode is not null)
 		{
-			if (startNode.Nodes[1] != null) GetAll((RedBlackNode<TKey, TValue>)startNode.Nodes[1]); // Nodes[1] Left child
-			yield return new(startNode.Key, startNode.Value);
-			if (startNode.Nodes[2] != null) GetAll((RedBlackNode<TKey, TValue>)startNode.Nodes[2]); // Nodes[2] Right child
-		}
-	}
-
-	public bool Remove(RedBlackNode<TKey, TValue> startNode, TKey key)
-	{
-		throw new NotImplementedException();
-	}
-
-	public bool Update(RedBlackNode<TKey, TValue> startNode, TKey key, TValue value)
-	{
-		throw new NotImplementedException();
-	}
-
-	public TValue GetValue(RedBlackNode<TKey, TValue> startNode, TKey key)
-	{
-		throw new NotImplementedException();
-	}
-
-	public IEnumerable<KeyValuePair<TKey, TValue>> Search(RedBlackNode<TKey, TValue> startNode, Func<TKey, bool> condition)
-	{
-		while (startNode != null)
-		{
-			if (condition(startNode.Key))
+			if (currentNode.Nodes["Left"] is not null)
 			{
-				yield return new KeyValuePair<TKey, TValue>(startNode.Key, startNode.Value);
-			}
-			else
-			{
-				foreach (var item in Search((RedBlackNode<TKey, TValue>)startNode.Nodes[1], condition)) // Nodes[1] Left child
+				foreach (var item in GetAll((RedBlackNode<TKey, TValue>)currentNode.Nodes["Left"]))
 				{
 					yield return item;
 				}
-				foreach (var item in Search((RedBlackNode<TKey, TValue>)startNode.Nodes[2], condition)) // Nodes[2] Right child
+			}
+
+			yield return new KeyValuePair<TKey, TValue>(currentNode.Key, currentNode.Value);
+
+			if (currentNode.Nodes["Right"] is not null)
+			{
+				foreach (var item in GetAll((RedBlackNode<TKey, TValue>)currentNode.Nodes["Right"]))
+				{
+					yield return item;
+				}
+			}
+		}
+	}
+
+	public bool Remove(ref RedBlackNode<TKey, TValue> currentNode, TKey key)
+	{
+		if (currentNode is null)
+		{
+			return false;
+		}
+
+		if (key.CompareTo(currentNode.Key) < 0)
+		{
+			var node = (RedBlackNode<TKey, TValue>)currentNode.Nodes["Left"]; 
+			var result = Remove(ref node, key);
+			currentNode.Nodes["Left"] = node; // Assign the updated left child to the parent node
+			return result;
+		}
+		else if (key.CompareTo(currentNode.Key) > 0)
+		{
+			var node = (RedBlackNode<TKey, TValue>)currentNode.Nodes["Right"]; 
+			var result = Remove(ref node, key);
+			currentNode.Nodes["Right"] = node; // Assign the updated right child to the parent node
+			return result;
+		}
+		else
+		{
+			PoolFactory.Recycle(currentNode);
+			currentNode = null;
+			return true;
+		}
+	}
+
+	public bool Update(ref RedBlackNode<TKey, TValue> currentNode, TKey key, TValue value)
+	{
+		if (currentNode is null)
+		{
+			return false;
+		}
+		return true;
+	}
+
+	public TValue GetValue(RedBlackNode<TKey, TValue> currentNode, TKey key)
+	{
+		if (currentNode is null)
+		{
+			return default;
+		}
+		return default;
+	}
+
+	public IEnumerable<KeyValuePair<TKey, TValue>> Search(RedBlackNode<TKey, TValue> currentNode, Func<TKey, bool> condition)
+	{
+		if (currentNode is not null)
+		{
+			if (condition(currentNode.Key))
+			{
+				yield return new KeyValuePair<TKey, TValue>(currentNode.Key, currentNode.Value);
+			}
+			else
+			{
+				foreach (var item in Search((RedBlackNode<TKey, TValue>)currentNode.Nodes["Left"], condition)) 
+				{
+					yield return item;
+				}
+				foreach (var item in Search((RedBlackNode<TKey, TValue>)currentNode.Nodes["Right"], condition)) 
 				{
 					yield return item;
 				}

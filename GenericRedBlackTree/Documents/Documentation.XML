@@ -28,20 +28,20 @@
         </member>
         <member name="P:Interfaces.IGenericRedBlackNode`2.Parent">
             <summary>
-            Gets or sets the parent node of the current node.
-            The parent node is the immediate ancestor of the current node in the tree structure.
+            Gets or sets the parentNode node of the current node.
+            The parentNode node is the immediate ancestor of the current node in the tree structure.
             </summary>
         </member>
         <member name="P:Interfaces.IGenericRedBlackNode`2.Left">
             <summary>
             Gets or sets the left child node of the current node.
-            The left child of a node is either a red or black node that is positioned to the left of its parent node.
+            The left child of a node is either a red or black node that is positioned to the left of its parentNode node.
             </summary>
         </member>
         <member name="P:Interfaces.IGenericRedBlackNode`2.Right">
             <summary>
             Gets or sets the right child node of the current node.
-            The right child of a node is either a red or black node that is positioned to the right of its parent node.
+            The right child of a node is either a red or black node that is positioned to the right of its parentNode node.
             </summary>
         </member>
         <member name="T:Interfaces.IGenericRedBlackTree`1">
@@ -141,7 +141,7 @@
         </member>
         <member name="P:Trees.GenericRedBlackTree`1.GenericRedBlackTreeNode.Parent">
             <summary>
-            Gets or sets the parent node of the current node.
+            Gets or sets the parentNode node of the current node.
             </summary>
         </member>
         <member name="P:Trees.GenericRedBlackTree`1.GenericRedBlackTreeNode.Left">
@@ -304,7 +304,7 @@
         </member>
         <member name="M:Trees.GenericRedBlackTree`1.ReplaceNode(Trees.GenericRedBlackTree{`0}.GenericRedBlackTreeNode,Trees.GenericRedBlackTree{`0}.GenericRedBlackTreeNode)">
             <summary>
-            Replaces a node in the Red-Black Tree with a new node, updating parent and child relationships.
+            Replaces a node in the Red-Black Tree with a new node, updating parentNode and child relationships.
             </summary>
             <param name="replacementNode">The node to be replaced.</param>
             <param name="child">The replacement node.</param>
@@ -340,7 +340,7 @@
         </member>
         <member name="M:Trees.GenericRedBlackTree`1.IsLeftChild(Trees.GenericRedBlackTree{`0}.GenericRedBlackTreeNode)">
             <summary>
-            Checks if a given node is the left child of its parent.
+            Checks if a given node is the left child of its parentNode.
             </summary>
             <param name="currentNode">The node to check.</param>
             <returns>True if the node is the left child; otherwise, false.</returns>
@@ -370,7 +370,7 @@
             Fixes the Red-Black Tree after a remove operation to maintain the properties of the tree.
             </summary>
             <param name="currentNode">The node to fix.</param>
-            <param name="parent">The parent of the node.</param>
+            <param name="parentNode">The parentNode of the node.</param>
         </member>
         <member name="M:Trees.GenericRedBlackTree`1.IsBlack(Trees.GenericRedBlackTree{`0}.GenericRedBlackTreeNode)">
             <summary>
@@ -398,7 +398,7 @@
             <param name="pairsArray">The array of KeyValuePairs to build the tree with.</param>
             <param name="start">The position to start adding items from..</param>
             <param name="end">The position to stop adding items at.</param>
-            <param name="parent">The node where the tree is merged.</param>
+            <param name="parentNode">The node where the tree is merged.</param>
             <returns>the newly formed tree at a node to add into a Tree.</returns>
         </member>
     </members>
