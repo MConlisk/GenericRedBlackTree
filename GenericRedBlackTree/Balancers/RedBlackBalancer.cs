@@ -1,205 +1,333 @@
-﻿using DataStructures.Balancers.Helpers;
-using DataStructures.Interfaces;
+﻿using DataStructures.Interfaces;
 using DataStructures.Nodes;
 
 using System;
 
-namespace DataStructures.Balancers;
-
-public class RedBlackBalancer<TKey, TValue> : IBalancer<TKey, TValue, RedBlackNode<TKey, TValue>> where TKey : IComparable<TKey>
+namespace DataStructures.Balancers
 {
-	public bool AfterInsert(ref RedBlackNode<TKey, TValue> currentNode, RedBlackNode<TKey, TValue> nodeToInsert)
+	public partial class RedBlackBalancer<TKey, TValue> : IBalancer<TKey, TValue, RedBlackNode<TKey, TValue>> where TKey : IComparable<TKey>
 	{
-
-		// Assuming nodeToInsert is always marked as red after insertion
-		if (currentNode is null || !currentNode.IsRed)
+		public bool AfterInsert(ref RedBlackNode<TKey, TValue> currentNode, RedBlackNode<TKey, TValue> nodeToInsert)
 		{
-			// No need to rebalance if the current node is black or null
+			if (currentNode is null || !currentNode.IsRed)
+			{
+				return false;
+			}
+
+			RedBlackNode<TKey, TValue> parentNode = currentNode.Nodes["Parent"];
+			RedBlackNode<TKey, TValue> grandparent = parentNode?.Nodes["Parent"];
+
+			if (parentNode is null)
+			{
+				currentNode.IsRed = false;
+			}
+			else if (parentNode.IsRed)
+			{
+				RedBlackNode<TKey, TValue> uncle = FamilyHandling.GetUncle(parentNode, grandparent);
+
+				if (uncle != null && uncle.IsRed)
+				{
+					parentNode.IsRed = false;
+					uncle.IsRed = false;
+					grandparent.IsRed = true;
+					AfterInsert(ref grandparent, nodeToInsert);
+					return true;
+				}
+				else
+				{
+					if (FamilyHandling.IsLeftChild(parentNode, grandparent) != FamilyHandling.IsLeftChild(currentNode, parentNode))
+					{
+						Rotations.PerformRotation(currentNode, parentNode, grandparent);
+						parentNode = currentNode.Nodes["Parent"];
+					}
+
+					grandparent.IsRed = true;
+					parentNode.IsRed = false;
+					Rotations.PerformRotation(parentNode, grandparent, FamilyHandling.GetGreatGrandparent(grandparent));
+
+					return true;
+				}
+			}
+
+			if (grandparent?.Nodes["Parent"] is null)
+			{
+				currentNode.IsRed = false;
+			}
+
 			return false;
 		}
 
-		RedBlackNode<TKey, TValue> parentNode = RedBlackFamilyHandling<TKey, TValue>.GetParent(currentNode);
-		RedBlackNode<TKey, TValue> grandparent = RedBlackFamilyHandling<TKey, TValue>.GetParent(parentNode);
-
-		if (parentNode is null)
+		public bool AfterRemoval(ref RedBlackNode<TKey, TValue> currentNode, TKey removedKey)
 		{
-			// Parent is null, meaning currentNode is the root
-			currentNode.IsRed = false; // Ensure the root is black
-		}
-		else if (parentNode.IsRed)
-		{
-			// Parent is red, indicating a violation
-			RedBlackNode<TKey, TValue> uncle = RedBlackFamilyHandling<TKey, TValue>.GetUncle(parentNode, grandparent);
-
-			if (uncle != null && uncle.IsRed)
+			if (currentNode is null)
 			{
-				// Case 1: Parent and Uncle are red
-				parentNode.IsRed = false;
-				uncle.IsRed = false;
-				grandparent.IsRed = true;
-				AfterInsert(ref grandparent, nodeToInsert);
+				Console.WriteLine("AfterRemoval found the current node is Null");
+				return false;
+			}
 
+			var replacementNode = DetermineReplacementNode(FindNodeToRemove(currentNode, removedKey));
+
+			if (replacementNode is not null && replacementNode.IsRed)
+			{
+				replacementNode.IsRed = false;
 				return true;
+			}
+
+			RedBlackNode<TKey, TValue> parentNode = currentNode.Nodes["Parent"];
+			bool isLeftChild = FamilyHandling.IsLeftChild(currentNode, parentNode);
+
+			if (parentNode is null)
+			{
+				Console.WriteLine($"AfterRemoval found the FamilyHandling<TKey, TValue>.GetParent(current) node is Null, currentNode: Key={currentNode.Key}, Value={currentNode.Value}, IsRed={currentNode.IsRed}");
+				return false;
+			}
+
+			RedBlackNode<TKey, TValue> sibling = FamilyHandling.GetSibling(parentNode, isLeftChild);
+			RedBlackNode<TKey, TValue> leftNephew = sibling?.Nodes["Left"];
+			RedBlackNode<TKey, TValue> rightNephew = sibling?.Nodes["Right"];
+
+			if (HandleBlackSiblingCase(parentNode, sibling, leftNephew, rightNephew))
+			{
+				return true;
+			}
+
+			if (HandleRedSiblingCase(parentNode, sibling))
+			{
+				return true;
+			}
+
+			FamilyHandling.HandleBlackSiblingLeftNephewRedCase(ref parentNode, isLeftChild);
+			FamilyHandling.HandleBlackSiblingRightNephewRedCase(sibling, rightNephew, parentNode, isLeftChild);
+
+			return true;
+		}
+
+		private bool HandleBlackSiblingCase(RedBlackNode<TKey, TValue> parentNode, RedBlackNode<TKey, TValue> sibling, RedBlackNode<TKey, TValue> leftNephew, RedBlackNode<TKey, TValue> rightNephew)
+		{
+			if (sibling is not null && !sibling.IsRed && (leftNephew is null || !leftNephew.IsRed) && (rightNephew is null || !rightNephew.IsRed))
+			{
+				sibling.IsRed = true;
+				return AfterRemoval(ref parentNode, default);
+			}
+
+			if (parentNode.IsRed && (sibling is null || !sibling.IsRed) && (leftNephew is null || !leftNephew.IsRed) && (rightNephew is null || !rightNephew.IsRed))
+			{
+				parentNode.IsRed = false;
+				sibling.IsRed = true;
+				return true;
+			}
+
+			return false;
+		}
+
+		private static RedBlackNode<TKey, TValue> FindNodeToRemove(RedBlackNode<TKey, TValue> currentNode, TKey removedKey)
+		{
+			while (currentNode is not null)
+			{
+				int comparisonResult = removedKey.CompareTo(currentNode.Key);
+
+				if (comparisonResult is 0)
+				{
+					return currentNode;
+				}
+				else if (comparisonResult < 0)
+				{
+					currentNode = currentNode.Nodes["Left"];
+				}
+				else
+				{
+					currentNode = currentNode.Nodes["Right"];
+				}
+			}
+
+			return null;
+		}
+
+		private static RedBlackNode<TKey, TValue> DetermineReplacementNode(RedBlackNode<TKey, TValue> nodeToRemove)
+		{
+			if (nodeToRemove.Nodes["Left"] is not null && nodeToRemove.Nodes["Parent"] != null)
+			{
+				return FindSuccessor(nodeToRemove.Nodes["Right"]);
 			}
 			else
 			{
-				// Cases 2 and 3: Parent is red, but Uncle is black or null
-				if (RedBlackFamilyHandling<TKey, TValue>.IsLeftChild(parentNode, grandparent) != RedBlackFamilyHandling<TKey, TValue>.IsLeftChild(currentNode, parentNode))
+				return nodeToRemove.Nodes["Left"] ?? nodeToRemove.Nodes["Right"];
+			}
+		}
+
+		private static RedBlackNode<TKey, TValue> FindSuccessor(RedBlackNode<TKey, TValue> node)
+		{
+			while (node.Nodes["Left"] is not null)
+			{
+				node = node.Nodes["Left"];
+			}
+			return node;
+		}
+
+		private static bool HandleRedSiblingCase(RedBlackNode<TKey, TValue> parentNode, RedBlackNode<TKey, TValue> sibling)
+		{
+			if (sibling is not null && sibling.IsRed)
+			{
+				parentNode.IsRed = true;
+				sibling.IsRed = false;
+
+				if (FamilyHandling.IsLeftChild(sibling, parentNode))
 				{
-					// Case 2: Nodes and parentNode are not on the same side
-					RedBlackRotations<TKey, TValue>.PerformRotation(currentNode, parentNode, grandparent);
-					parentNode = (RedBlackNode<TKey, TValue>)currentNode.Nodes["Parent"]; // Update parentNode after rotation, Nodes[0] = Parent Nodes
+					Rotations.RotateRight(sibling, parentNode.Nodes["Parent"]);
+				}
+				else
+				{
+					Rotations.RotateLeft(sibling, parentNode.Nodes["Parent"]);
 				}
 
-				// Case 3: Nodes and parentNode are on the same side
-				grandparent.IsRed = true;
-				parentNode.IsRed = false;
-				RedBlackRotations<TKey, TValue>.PerformRotation(parentNode, grandparent, RedBlackFamilyHandling<TKey, TValue>.GetGreatGrandparent(grandparent));
-
 				return true;
 			}
-		}
 
-		// Ensure the root is black
-		if (RedBlackFamilyHandling<TKey, TValue>.GetGreatGrandparent(grandparent) == null)
-		{
-			currentNode.IsRed = false;
-		}
-
-		return false;
-	}
-
-	public bool AfterRemoval(ref RedBlackNode<TKey, TValue> currentNode, TKey removedKey)
-	{
-		if (currentNode is null)
-		{
-			Console.WriteLine($"AfterRemoval found the current node is Null");
 			return false;
 		}
-
-		var replacementNode = DetermineReplacementNode(FindNodeToRemove(currentNode, removedKey));
-
-		if (replacementNode is not null && replacementNode.IsRed)
-		{
-			replacementNode.IsRed = false;
-			return true;
-		}
-
-		RedBlackNode<TKey, TValue> parentNode = RedBlackFamilyHandling<TKey, TValue>.GetParent(currentNode);
-		bool isLeftChild = RedBlackFamilyHandling<TKey, TValue>.IsLeftChild(currentNode, parentNode);
-
-		if (parentNode is null)
-		{
-			Console.WriteLine($"AfterRemoval found the RedBlackFamilyHandling<TKey, TValue>.GetParent(current) node is Null, currentNode: Key={currentNode.Key}, Value={currentNode.Value}, IsRed={currentNode.IsRed}");
-			return false;
-		}
-
-		RedBlackNode<TKey, TValue> sibling = RedBlackFamilyHandling<TKey, TValue>.GetSibling(parentNode, isLeftChild);
-		RedBlackNode<TKey, TValue> leftNephew = RedBlackFamilyHandling<TKey, TValue>.GetLeftChild(sibling);
-		RedBlackNode<TKey, TValue> rightNephew = RedBlackFamilyHandling<TKey, TValue>.GetRightChild(sibling);
-
-		if (HandleRedSiblingCase(parentNode, sibling))
-		{
-			return true;
-		}
-
-		if (HandleBlackSiblingCase(parentNode, sibling, leftNephew, rightNephew))
-		{
-			return true;
-		}
-
-		RedBlackFamilyHandling<TKey, TValue>.HandleBlackSiblingLeftNephewRedCase(ref parentNode, isLeftChild);
-		RedBlackFamilyHandling<TKey, TValue>.HandleBlackSiblingRightNephewRedCase(sibling, rightNephew, parentNode, isLeftChild);
-
-		return true;
 	}
 
-	private bool HandleBlackSiblingCase(RedBlackNode<TKey, TValue> parentNode, RedBlackNode<TKey, TValue> sibling, RedBlackNode<TKey, TValue> leftNephew, RedBlackNode<TKey, TValue> rightNephew)
+	public partial class RedBlackBalancer<TKey, TValue> where TKey : IComparable<TKey>
 	{
-		if (sibling is not null && !sibling.IsRed && (leftNephew is null || !leftNephew.IsRed) && (rightNephew is null || !rightNephew.IsRed))
+		internal static class Rotations
 		{
-			sibling.IsRed = true;
-			return AfterRemoval(ref parentNode, default);
-		}
-
-		if (parentNode.IsRed && (sibling is null || !sibling.IsRed) && (leftNephew is null || !leftNephew.IsRed) && (rightNephew is null || !rightNephew.IsRed))
-		{
-			parentNode.IsRed = false;
-			if (sibling is not null) sibling.IsRed = true;
-			return true;
-		}
-
-		return false;
-	}
-	private static RedBlackNode<TKey, TValue> FindNodeToRemove(RedBlackNode<TKey, TValue> currentNode, TKey removedKey)
-	{
-		// Perform a search operation to find the node with the specified key
-		while (currentNode is not null)
-		{
-			int comparisonResult = removedKey.CompareTo(currentNode.Key);
-
-			if (comparisonResult is 0)
+			internal static void PerformRotation(RedBlackNode<TKey, TValue> pivot, RedBlackNode<TKey, TValue> parentNode, RedBlackNode<TKey, TValue> grandparent)
 			{
-				// Nodes with the specified key found
-				return currentNode;
-			}
-			else if (comparisonResult < 0)
-			{
-				currentNode = (RedBlackNode<TKey, TValue>)currentNode.Nodes["Left"]; // Left child
-			}
-			else
-			{
-				currentNode = (RedBlackNode<TKey, TValue>)currentNode.Nodes["Right"]; // Right child
-			}
-		}
+				bool isLeftChild = FamilyHandling.IsLeftChild(pivot, parentNode);
 
-		// Nodes with the specified key not found
-		return null;
-	}
+				if (isLeftChild)
+				{
+					RotateRight(pivot, grandparent);
+				}
+				else
+				{
+					RotateLeft(pivot, grandparent);
+				}
 
-	private static RedBlackNode<TKey, TValue> DetermineReplacementNode(RedBlackNode<TKey, TValue> nodeToRemove)
-	{
-		if (nodeToRemove.Nodes["Left"] is not null && nodeToRemove.Nodes["Right"] != null)
-		{
-			// Nodes has two children, find the in-order successor
-			return FindSuccessor((RedBlackNode<TKey, TValue>)nodeToRemove.Nodes["Right"]);
-		}
-		else
-		{
-			// Nodes has at most one child, return the non-null child
-			return (RedBlackNode<TKey, TValue>)(nodeToRemove.Nodes["Left"] ?? nodeToRemove.Nodes["Right"]);
+				pivot.IsRed = false;
+				grandparent.IsRed = true;
+			}
+
+			internal static void RotateLeft(RedBlackNode<TKey, TValue> pivot, RedBlackNode<TKey, TValue> grandparent)
+			{
+				grandparent.Nodes["Right"] = pivot.Nodes["Left"];
+				pivot.Nodes["Left"] = grandparent;
+
+				pivot.IsRed = false;
+				grandparent.IsRed = true;
+			}
+
+			internal static void RotateRight(RedBlackNode<TKey, TValue> pivot, RedBlackNode<TKey, TValue> grandparent)
+			{
+				grandparent.Nodes["Left"] = pivot.Nodes["Parent"];
+				pivot.Nodes["Parent"] = grandparent;
+
+				pivot.IsRed = false;
+				grandparent.IsRed = true;
+			}
 		}
 	}
 
-	private static RedBlackNode<TKey, TValue> FindSuccessor(RedBlackNode<TKey, TValue> node)
+	public partial class RedBlackBalancer<TKey, TValue> where TKey : IComparable<TKey>
 	{
-		// Find the leftmost node in the right subtree
-		while (node.Nodes["Left"] is not null)
+		internal static class FamilyHandling
 		{
-			node = (RedBlackNode<TKey, TValue>)node.Nodes["Left"];
-		}
-		return node;
-	}
-
-	private static bool HandleRedSiblingCase(RedBlackNode<TKey, TValue> parentNode, RedBlackNode<TKey, TValue> sibling)
-	{
-		if (sibling is not null && sibling.IsRed)
-		{
-			parentNode.IsRed = true;
-			sibling.IsRed = false;
-
-			if (RedBlackFamilyHandling<TKey, TValue>.IsLeftChild(sibling, parentNode))
+			internal static RedBlackNode<TKey, TValue> GetGrandparent(RedBlackNode<TKey, TValue> node)
 			{
-				RedBlackRotations<TKey, TValue>.RotateRight(sibling, RedBlackFamilyHandling<TKey, TValue>.GetGrandparent(parentNode));
-			}
-			else
-			{
-				RedBlackRotations<TKey, TValue>.RotateLeft(sibling, RedBlackFamilyHandling<TKey, TValue>.GetGrandparent(parentNode));
+				return GetParent(GetParent(node));
 			}
 
-			return true;
-		}
+			internal static RedBlackNode<TKey, TValue> GetGreatGrandparent(RedBlackNode<TKey, TValue> node)
+			{
+				return GetParent(GetGrandparent(node));
+			}
 
-		return false;
+			internal static RedBlackNode<TKey, TValue> GetLeftChild(RedBlackNode<TKey, TValue> node)
+			{
+				return node?.Nodes["Left"];
+			}
+
+			internal static RedBlackNode<TKey, TValue> GetParent(RedBlackNode<TKey, TValue> node)
+			{
+				return node?.Nodes["Parent"];
+			}
+
+			internal static RedBlackNode<TKey, TValue> GetRightChild(RedBlackNode<TKey, TValue> node)
+			{
+				return node?.Nodes["Right"];
+			}
+
+			internal static RedBlackNode<TKey, TValue> GetSibling(RedBlackNode<TKey, TValue> parentNode, bool isLeftChild)
+			{
+				if (isLeftChild)
+				{
+					return parentNode.Nodes["Right"];
+				}
+				else
+				{
+					return parentNode.Nodes["Left"];
+				}
+			}
+
+			internal static RedBlackNode<TKey, TValue> GetUncle(RedBlackNode<TKey, TValue> parentNode, RedBlackNode<TKey, TValue> grandparent)
+			{
+				return IsLeftChild(parentNode, grandparent) ? grandparent.Nodes["Right"] : grandparent.Nodes["Left"];
+			}
+
+			internal static bool HandleBlackSiblingLeftNephewRedCase(ref RedBlackNode<TKey, TValue> parentNode, bool isLeftChild)
+			{
+				RedBlackNode<TKey, TValue> sibling = GetSibling(GetGrandparent(parentNode), isLeftChild);
+				RedBlackNode<TKey, TValue> leftNephew = sibling?.Nodes["Left"];
+
+				if (sibling is not null && !sibling.IsRed && leftNephew is not null && leftNephew.IsRed)
+				{
+					sibling.IsRed = parentNode.IsRed;
+					parentNode.IsRed = false;
+					leftNephew.IsRed = false;
+					Rotations.PerformRotation(leftNephew, sibling, parentNode);
+
+					if (isLeftChild)
+					{
+						parentNode.Nodes["Right"] = sibling;
+					}
+					else
+					{
+						parentNode.Nodes["Left"] = sibling;
+					}
+
+					return true;
+				}
+
+				return false;
+			}
+
+			internal static bool HandleBlackSiblingRightNephewRedCase(RedBlackNode<TKey, TValue> sibling, RedBlackNode<TKey, TValue> rightNephew, RedBlackNode<TKey, TValue> parentNode, bool isLeftChild)
+			{
+				if (sibling is not null && !sibling.IsRed && rightNephew is not null && rightNephew.IsRed)
+				{
+					sibling.IsRed = parentNode.IsRed;
+					parentNode.IsRed = false;
+					rightNephew.IsRed = false;
+
+					if (isLeftChild)
+					{
+						Rotations.RotateRight(rightNephew, parentNode);
+					}
+					else
+					{
+						Rotations.RotateLeft(rightNephew, GetGrandparent(parentNode));
+					}
+
+					return true;
+				}
+
+				return false;
+			}
+
+			internal static bool IsLeftChild(RedBlackNode<TKey, TValue> node, RedBlackNode<TKey, TValue> parentNode)
+			{
+				return parentNode is not null && parentNode.Nodes["Left"] == node;
+			}
+		}
 	}
 }
