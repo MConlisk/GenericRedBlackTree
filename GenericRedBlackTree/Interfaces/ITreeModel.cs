@@ -10,10 +10,9 @@ namespace DataStructures.Interfaces;
 /// </summary>
 /// <typeparam name="TKey"></typeparam>
 /// <typeparam name="TValue"></typeparam>
-public interface ITreeModel<TKey, TValue, TNode> where TKey : IComparable<TKey> where TNode : INode<TKey, TValue>
+public interface ITreeModel<TKey, TValue, TNode> where TKey : IComparable<TKey> where TNode : ITreeNode<TKey, TValue>
 {
 	bool IsEmpty { get; }
-	IBalancer<TKey, TValue, TNode> Balancer { get; }
 	ITraverser<TKey, TValue, TNode> Traverser { get; }
 	TNode RootNode { get; }
 	Func<TKey, TValue, TNode> NodeFactory { get; }

@@ -73,6 +73,7 @@ public class RedBlackBalancer<TKey, TValue> : IBalancer<TKey, TValue, RedBlackNo
 	{
 		if (currentNode is null)
 		{
+			Console.WriteLine($"AfterRemoval found the current node is Null");
 			return false;
 		}
 
@@ -89,6 +90,7 @@ public class RedBlackBalancer<TKey, TValue> : IBalancer<TKey, TValue, RedBlackNo
 
 		if (parentNode is null)
 		{
+			Console.WriteLine($"AfterRemoval found the RedBlackFamilyHandling<TKey, TValue>.GetParent(current) node is Null, currentNode: Key={currentNode.Key}, Value={currentNode.Value}, IsRed={currentNode.IsRed}");
 			return false;
 		}
 
@@ -109,7 +111,7 @@ public class RedBlackBalancer<TKey, TValue> : IBalancer<TKey, TValue, RedBlackNo
 		RedBlackFamilyHandling<TKey, TValue>.HandleBlackSiblingLeftNephewRedCase(ref parentNode, isLeftChild);
 		RedBlackFamilyHandling<TKey, TValue>.HandleBlackSiblingRightNephewRedCase(sibling, rightNephew, parentNode, isLeftChild);
 
-		return false;
+		return true;
 	}
 
 	private bool HandleBlackSiblingCase(RedBlackNode<TKey, TValue> parentNode, RedBlackNode<TKey, TValue> sibling, RedBlackNode<TKey, TValue> leftNephew, RedBlackNode<TKey, TValue> rightNephew)

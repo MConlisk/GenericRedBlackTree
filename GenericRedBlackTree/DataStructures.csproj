@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Interfaces\IComponent.cs" />
+    <Compile Remove="Interfaces\INode.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Documents\Documentation.XML" />

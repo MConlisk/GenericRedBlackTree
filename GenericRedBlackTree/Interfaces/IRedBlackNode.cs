@@ -1,8 +1,13 @@
-﻿using System;
+﻿using DataStructures.Balancers;
+
+using Factories.Interfaces;
+
+using System;
 
 namespace DataStructures.Interfaces;
 
-public interface IRedBlackNode<TKey,TValue> : INode<TKey, TValue> where TKey : IComparable<TKey>
+public interface IRedBlackNode : IRecyclable
 {
     bool IsRed { get; set; }
+    bool IsNil { get; }
 }

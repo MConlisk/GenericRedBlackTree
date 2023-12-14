@@ -99,7 +99,7 @@ internal static class RedBlackFamilyHandling<TKey, TValue> where TKey : ICompara
 		return false;
 	}
 
-	internal static bool IsLeftChild(INode<TKey, TValue> node, RedBlackNode<TKey, TValue> parentNode)
+	internal static bool IsLeftChild(ITreeNode<TKey, TValue> node, RedBlackNode<TKey, TValue> parentNode)
 	{
 		return parentNode is not null && parentNode.Nodes["Left"] == node;
 	}

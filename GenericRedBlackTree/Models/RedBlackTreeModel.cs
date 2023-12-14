@@ -15,67 +15,44 @@ public class RedBlackTreeModel<TKey, TValue> : ITreeModel<TKey, TValue, RedBlack
     private RedBlackNode<TKey, TValue> _rootNode;
     private readonly Func<TKey, TValue, RedBlackNode<TKey, TValue>> _nodeFactory;
     private readonly ITraverser<TKey, TValue, RedBlackNode<TKey, TValue>> _traverser;
-    private readonly IBalancer<TKey, TValue, RedBlackNode<TKey, TValue>> _balancer;
 
-    public RedBlackTreeModel(ITraverser<TKey, TValue, RedBlackNode<TKey, TValue>> traverser, IBalancer<TKey, TValue, RedBlackNode<TKey,TValue>> balancer)
+    public RedBlackTreeModel(ITraverser<TKey, TValue, RedBlackNode<TKey, TValue>> traverser)
     {
         _traverser = traverser;
-        _balancer = balancer;
         _nodeFactory = (key, value) => PoolFactory.Create(() => new RedBlackNode<TKey, TValue>(key, value));
+        _rootNode = _nodeFactory(default, default);
     }
 
     public bool IsEmpty => _rootNode is null || _rootNode.Value.Equals(default);
     public RedBlackNode<TKey, TValue> RootNode => _rootNode;
     public Func<TKey, TValue, RedBlackNode<TKey, TValue>> NodeFactory => _nodeFactory;
     public ITraverser<TKey, TValue, RedBlackNode<TKey, TValue>> Traverser => _traverser;
-    public IBalancer<TKey, TValue, RedBlackNode<TKey, TValue>> Balancer => _balancer;
 
 	public void Insert(TKey key, TValue value)
     {
-        var nodeToInsert = _nodeFactory(key, value);
+		var nodeToInsert = _nodeFactory(key, value);
 
-        if (_rootNode is null)
+		if (_rootNode.IsNil)
         {
             _rootNode = nodeToInsert;
+            _rootNode.IsRed = false;
             return;
         }
         
-		if (_traverser.Insert(ref _rootNode, nodeToInsert))
-        {
-            if (!_balancer.AfterInsert(ref _rootNode, nodeToInsert))
-            {
-                throw new TreeBalanceException();
-            }
-			return;
-		}
-        throw new InsertTraversalException(new KeyValuePair<object, object>(key, value));
+		if (!_traverser.Insert(ref _rootNode, nodeToInsert))
+            throw new InsertTraversalException(new KeyValuePair<object, object>(key, value));
     }
 
+	public void Remove(TKey key) => _traverser.Remove(_rootNode, key);
 
-    public void Remove(TKey key)
-    {
-        if(!_traverser.Remove(ref _rootNode, key))
-        {
-            if (!_balancer.AfterRemoval(ref _rootNode, key))
-            {
-                throw new TreeBalanceException();
-            }
-            return;
-        }
-        throw new RemoveTraversalException(new KeyValuePair<object, object>(key, default));
-    }
-
-    public void Update(TKey key, TValue value)
+	public void Update(TKey key, TValue value)
     {
 
     }
 
-    public TValue GetValue(TKey key)
-    {
-        return default;
-    }
+	public TValue GetValue(TKey key) => _traverser.GetValue(_rootNode, key);
 
-    public IEnumerable<KeyValuePair<TKey, TValue>> GetAll()
+	public IEnumerable<KeyValuePair<TKey, TValue>> GetAll()
     {
         foreach (var item in Traverser.GetAll(_rootNode))
         {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace DataStructures.Exceptions;
 
@@ -33,5 +34,12 @@ public class RemoveTraversalException : ApplicationException
 	/// <param name="message"></param>
 	/// <param name="innerException"></param>
 	/// <param name="keyValuePair"></param>
-	public RemoveTraversalException(string message, Exception innerException, KeyValuePair<object, object> keyValuePair) : base(message, innerException) { _key = keyValuePair.Key; _value = keyValuePair.Value; }
+	public RemoveTraversalException(string message, Exception innerException, KeyValuePair<object, object> keyValuePair) : base(message, innerException)
+	{
+		_key = keyValuePair.Key; 
+		_value = keyValuePair.Value;
+
+		Console.WriteLine($"The Cause of the RemoveTraversalException is: Key={_key}, Value={_value}");
+	}
+
 }

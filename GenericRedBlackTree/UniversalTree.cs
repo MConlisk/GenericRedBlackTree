@@ -18,17 +18,17 @@ namespace DataStructures;
 /// </summary>
 /// <typeparam name="TKey"></typeparam>
 /// <typeparam name="TValue"></typeparam>
-public class UniversalTree<TKey, TValue> where TKey : IComparable<TKey>
+public class UniversalTree<TKey, TValue, TNode> where TNode : ITreeNode<TKey, TValue> where TKey : IComparable<TKey>
 {
     private readonly bool _acceptsDuplicateKeys;
     private readonly int _maxCapacity;
 
-    private readonly ITreeModel<TKey, TValue, INode<TKey, TValue>> _treeModel;
+    private readonly ITreeModel<TKey, TValue, TNode> _treeModel;
     private readonly List<TKey> _index;
 
-    public UniversalTree(ITreeModel<TKey, TValue, INode<TKey, TValue>> treeModel) : this(treeModel, false, 0) { }
-    public UniversalTree(ITreeModel<TKey, TValue, INode<TKey, TValue>> treeModel, bool acceptDuplicateKeys) : this(treeModel, acceptDuplicateKeys, 0) { }
-    public UniversalTree(ITreeModel<TKey, TValue, INode<TKey, TValue>> treeModel, bool acceptDuplicateKeys, int maxCapacity)
+    public UniversalTree(ITreeModel<TKey, TValue, TNode> treeModel) : this(treeModel, false, 0) { }
+    public UniversalTree(ITreeModel<TKey, TValue, TNode> treeModel, bool acceptDuplicateKeys) : this(treeModel, acceptDuplicateKeys, 0) { }
+    public UniversalTree(ITreeModel<TKey, TValue, TNode> treeModel, bool acceptDuplicateKeys, int maxCapacity)
 	{
         _maxCapacity = maxCapacity;
         _acceptsDuplicateKeys = acceptDuplicateKeys;
