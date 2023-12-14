@@ -60,6 +60,7 @@
     <Content Include="Assets\Logo.png" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.11" />
     <PackageReference Include="GenericFactoryPool" Version="1.0.0.1" />
   </ItemGroup>
   <ItemGroup>

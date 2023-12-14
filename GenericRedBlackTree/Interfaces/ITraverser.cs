@@ -11,8 +11,8 @@ public interface ITraverser<TKey, TValue, TNode> where TKey : IComparable<TKey> 
     bool Insert(ref TNode currentNode, TNode nodeToInsert);
     bool Remove(TNode currentNode, TKey key);
     bool Update(TNode currentNode, TKey key, TValue value);
-    TValue GetValue(TNode currentNode, TKey key);
-    IEnumerable<KeyValuePair<TKey, TValue>> GetAll(TNode currentNode); 
+    TValue GetValue(TNode rootNode, TKey key);
+    IEnumerable<KeyValuePair<TKey, TValue>> GetAll(TNode rootNode); 
     IEnumerable<KeyValuePair<TKey, TValue>> Search(TNode currentNode, Func<TKey, bool> condition);
     
 }

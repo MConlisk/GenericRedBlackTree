@@ -62,24 +62,19 @@ namespace DataStructures.Nodes
 		/// </summary>
 		public int Height { get; set; }
 
-		private readonly IComparer<TKey> _keyComparer;
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RedBlackNode{TKey, TValue}"/> class.
 		/// </summary>
 		/// <param name="key">The key of the node.</param>
 		/// <param name="value">The value of the node.</param>
 		/// <param name="keyComparer">The key comparer.</param>
-		public RedBlackNode(TKey key, TValue value, IComparer<TKey> keyComparer = null)
+		public RedBlackNode(TKey key, TValue value)
 		{
-			if (key == null)
-				throw new ArgumentNullException(nameof(key), "Key cannot be null.");
+			ArgumentNullException.ThrowIfNull(nameof(key));
 
 			Key = key;
 			Value = value;
 			IsRed = true;
-
-			_keyComparer = keyComparer ?? Comparer<TKey>.Default;
 
 			Size = 1;
 			Height = 1;
@@ -163,8 +158,6 @@ namespace DataStructures.Nodes
 			Nodes = (Dictionary<string, RedBlackNode<TKey, TValue>>)info.GetValue(nameof(Nodes), typeof(Dictionary<string, RedBlackNode<TKey, TValue>>));
 			Size = info.GetInt32(nameof(Size));
 			Height = info.GetInt32(nameof(Height));
-
-			_keyComparer = Comparer<TKey>.Default;
 
 			OnNodeChanged();
 		}
