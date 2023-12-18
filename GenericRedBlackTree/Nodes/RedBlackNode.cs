@@ -1,5 +1,5 @@
-﻿using DataStructures.Interfaces;
-
+﻿using DataStructures.Events;
+using DataStructures.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -10,37 +10,19 @@ namespace DataStructures.Nodes
     /// Represents a node in a Red-Black Tree.
     /// </summary>
     [Serializable]
-	public class RedBlackNode<TKey, TValue> : ISerializable, IEquatable<RedBlackNode<TKey, TValue>>, IRedBlackNode, ITreeNode<TKey, TValue> where TKey : IComparable<TKey>
+	public partial class RedBlackNode<TKey, TValue> : RBBaseNode<TKey, TValue>
+	where TKey : IComparable<TKey>
+	where TValue : IComparable<TValue>
 	{
 		/// <summary>
 		/// Event triggered when the node is changed.
 		/// </summary>
-		public event EventHandler<NodeChangedEventArgs<TKey, TValue>> NodeChanged;
-
-		/// <summary>
-		/// Gets or sets the key of the node.
-		/// </summary>
-		public TKey Key { get; set; }
-
-		/// <summary>
-		/// Gets or sets the value of the node.
-		/// </summary>
-		public TValue Value { get; set; }
-
-		/// <summary>
-		/// Gets or sets a value indicating whether the node is red.
-		/// </summary>
-		public bool IsRed { get; set; }
-
-		/// <summary>
-		/// Gets a value indicating whether the node is nil.
-		/// </summary>
-		public bool IsNil => Value is null;
+		public override event EventHandler<NodeChangedEventArgs<RBBaseNode<TKey, TValue>>> NodeChanged;
 
 		/// <summary>
 		/// Gets or sets the child nodes.
 		/// </summary>
-		public Dictionary<string, RedBlackNode<TKey, TValue>> Nodes { get; set; } = new Dictionary<string, RedBlackNode<TKey, TValue>>
+		public Dictionary<string, RBBaseNode<TKey, TValue>> Nodes { get; set; } = new()
 		{
 			["Parent"] = null,
 			["Left"] = null,
@@ -63,14 +45,12 @@ namespace DataStructures.Nodes
 		public int Height { get; set; }
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="RedBlackNode{TKey, TValue}"/> class.
+		/// Initializes a new instance of the <see cref="RedBlackNode{T}"/> class.
 		/// </summary>
-		/// <param name="key">The key of the node.</param>
 		/// <param name="value">The value of the node.</param>
-		/// <param name="keyComparer">The key comparer.</param>
 		public RedBlackNode(TKey key, TValue value)
 		{
-			ArgumentNullException.ThrowIfNull(nameof(key));
+			ArgumentNullException.ThrowIfNull(nameof(value));
 
 			Key = key;
 			Value = value;
@@ -79,15 +59,6 @@ namespace DataStructures.Nodes
 			Size = 1;
 			Height = 1;
 
-			OnNodeChanged();
-		}
-
-		/// <summary>
-		/// Invokes the NodeChanged event.
-		/// </summary>
-		private void OnNodeChanged()
-		{
-			NodeChanged?.Invoke(this, new NodeChangedEventArgs<TKey, TValue>(this));
 		}
 
 		/// <summary>
@@ -100,17 +71,6 @@ namespace DataStructures.Nodes
 			return Equals(obj as RedBlackNode<TKey, TValue>);
 		}
 
-		/// <summary>
-		/// Determines whether the specified node is equal to the current node.
-		/// </summary>
-		/// <param name="other">The node to compare with the current node.</param>
-		/// <returns>true if the specified node is equal to the current node; otherwise, false.</returns>
-		public bool Equals(RedBlackNode<TKey, TValue> other)
-		{
-			return other != null &&
-				   Key.Equals(other.Key) &&
-				   Value.Equals(other.Value);
-		}
 
 		/// <summary>
 		/// Serves as the default hash function.
@@ -155,42 +115,20 @@ namespace DataStructures.Nodes
 			Key = (TKey)info.GetValue(nameof(Key), typeof(TKey));
 			Value = (TValue)info.GetValue(nameof(Value), typeof(TValue));
 			IsRed = info.GetBoolean(nameof(IsRed));
-			Nodes = (Dictionary<string, RedBlackNode<TKey, TValue>>)info.GetValue(nameof(Nodes), typeof(Dictionary<string, RedBlackNode<TKey, TValue>>));
+			Nodes = (Dictionary<string, RBBaseNode<TKey, TValue>>)info.GetValue(nameof(Nodes), typeof(Dictionary<string, RBBaseNode<TKey, TValue>>));
 			Size = info.GetInt32(nameof(Size));
 			Height = info.GetInt32(nameof(Height));
 
-			OnNodeChanged();
-		}
-
-		/// <summary>
-		/// Event arguments for the NodeChanged event.
-		/// </summary>
-		public class NodeChangedEventArgs<TK, TV> : EventArgs
-			where TK : IComparable<TK>
-		{
-			/// <summary>
-			/// Gets the node associated with the event.
-			/// </summary>
-			public RedBlackNode<TK, TV> Node { get; }
-
-			/// <summary>
-			/// Initializes a new instance of the <see cref="NodeChangedEventArgs{TKey, TValue}"/> class.
-			/// </summary>
-			/// <param name="node">The node associated with the event.</param>
-			public NodeChangedEventArgs(RedBlackNode<TK, TV> node)
-			{
-				Node = node;
-			}
 		}
 
 		/// <summary>
 		/// Resets the state of the node.
 		/// </summary>
-		public void ResetState()
+		public new void ResetState()
 		{
 			Key = default;
 			Value = default;
-			Nodes = new Dictionary<string, RedBlackNode<TKey, TValue>>
+			Nodes = new Dictionary<string, RBBaseNode<TKey, TValue>>
 			{
 				["Parent"] = null,
 				["Left"] = null,
@@ -200,7 +138,11 @@ namespace DataStructures.Nodes
 			Size = 1;
 			Height = 1;
 
-			OnNodeChanged();
+		}
+
+		public override void OnNodeChanged()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

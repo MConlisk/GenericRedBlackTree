@@ -23,6 +23,9 @@ public class RedBlackTreeModel<TKey, TValue> : ITreeModel<TKey, TValue, RedBlack
         _rootNode = _nodeFactory(default, default);
     }
 
+    public int Depth { get; private set; }
+    public int Width { get; private set; }
+
     public bool IsEmpty => _rootNode is null || _rootNode.Value.Equals(default);
     public RedBlackNode<TKey, TValue> RootNode => _rootNode;
     public Func<TKey, TValue, RedBlackNode<TKey, TValue>> NodeFactory => _nodeFactory;
@@ -66,6 +69,11 @@ public class RedBlackTreeModel<TKey, TValue> : ITreeModel<TKey, TValue, RedBlack
         {
             yield return item;
         }
+    }
+
+    public void MapTree()
+    {
+        _traverser.MapTree(_rootNode);
     }
 
     public void ResetState()

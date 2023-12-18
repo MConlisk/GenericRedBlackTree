@@ -18,7 +18,10 @@ namespace DataStructures;
 /// </summary>
 /// <typeparam name="TKey"></typeparam>
 /// <typeparam name="TValue"></typeparam>
-public class UniversalTree<TKey, TValue, TNode> where TNode : ITreeNode<TKey, TValue> where TKey : IComparable<TKey>
+public class UniversalTree<TKey, TValue, TNode> 
+	where TNode : ITreeNode
+	where TKey : IComparable<TKey>
+	where TValue : IComparable<TValue>
 {
     private readonly bool _acceptsDuplicateKeys;
     private readonly int _maxCapacity;
@@ -55,7 +58,7 @@ public class UniversalTree<TKey, TValue, TNode> where TNode : ITreeNode<TKey, TV
 
 		if (_index.Contains(key) && !_acceptsDuplicateKeys)
 		{
-			throw new DuplicateKeyException($"An attempt to insert the Key:{key} into the Tree failed because the tree already contains this Key.", key);
+			throw new DuplicateKeyException($"An attempt to insert the Key:{new KeyValuePair<object, object>(key, default)} into the Tree failed because the tree already contains this Key.");
 		}
 		else
 		{
@@ -111,6 +114,11 @@ public class UniversalTree<TKey, TValue, TNode> where TNode : ITreeNode<TKey, TV
 			return _treeModel.GetValue(key);
 		}
     }
+
+	public virtual void MapTree()
+	{
+		_treeModel.MapTree();
+	}
 
 	public virtual IEnumerable<KeyValuePair<TKey, TValue>> GetAll()
 	{

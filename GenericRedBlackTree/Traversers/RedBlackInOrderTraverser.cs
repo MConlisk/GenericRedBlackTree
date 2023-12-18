@@ -12,10 +12,11 @@ using System.Collections.Generic;
 
 namespace DataStructures.Traversers
 {
-	public class RedBlackInOrderTraverser<TKey, TValue> : ITraverser<TKey, TValue, RedBlackNode<TKey, TValue>> where TKey : IComparable<TKey>
+	public class RedBlackInOrderTraverser<TKey, TValue> : ITraverser<TKey, TValue, RedBlackNode<TKey, TValue>> 
+	where TKey : IComparable<TKey>
+	where TValue : IComparable<TValue>
 	{
 		private RedBlackBalancer<TKey, TValue> _balancer;
-		private Func<TKey, TValue, RedBlackNode<TKey, TValue>> _nodeFactory;
 
 		/// <summary>
 		/// Gets or sets the Red-Black balancer.
@@ -32,100 +33,140 @@ namespace DataStructures.Traversers
 		/// <param name="balancer">The Red-Black balancer.</param>
 		public RedBlackInOrderTraverser(RedBlackBalancer<TKey, TValue> balancer)
 		{
-			_nodeFactory = (key, value) => PoolFactory.Create(() => new RedBlackNode<TKey, TValue>(key, value));
 			_balancer = balancer;
-		}
-
-		/// <summary>
-		/// Sets the node factory for creating Red-Black nodes.
-		/// </summary>
-		/// <param name="factory">The node factory function.</param>
-		public void SetFactory(Func<TKey, TValue, RedBlackNode<TKey, TValue>> factory)
-		{
-			ArgumentNullException.ThrowIfNull(factory);
-			_nodeFactory = factory;
 		}
 
 		/// <summary>
 		/// Inserts a Red-Black node into the tree.
 		/// </summary>
-		public bool Insert(ref RedBlackNode<TKey, TValue> currentNode, RedBlackNode<TKey, TValue> nodeToInsert)
+		public bool Insert(ref RBBaseNode<TKey, TValue> rootNode, RedBlackNode<TKey, TValue> nodeToInsert)
 		{
-			if (currentNode.IsNil)
+			if (rootNode.IsNil)
 			{
-				currentNode = nodeToInsert;
+				rootNode = nodeToInsert;
 				return true;
 			}
 
-			RedBlackNode<TKey, TValue> parentNode = _nodeFactory(default, default);
+			RBBaseNode<TKey, TValue> parentNode;
 
-			while (!currentNode.IsNil)
+			Stack<RBBaseNode<TKey, TValue>> stack = new();
+			stack.Push(rootNode);
+
+			while (stack.TryPop(out RBBaseNode<TKey, TValue> currentNode))
 			{
 				parentNode = currentNode;
 
-				if (nodeToInsert.Key.CompareTo(currentNode.Key) > 0)
+				if (currentNode.Left == default || currentNode.Right == default)
 				{
-					if (currentNode.Nodes["Left"] is null)
+					if (currentNode.Left == default)
 					{
-						currentNode.Nodes["Left"] = nodeToInsert;
-						nodeToInsert.Nodes["Parent"] = currentNode;
+						currentNode.Left = nodeToInsert;
+						nodeToInsert.Parent = parentNode;
+						if (CheckBalanceIsNeeded(currentNode, parentNode))
+						{
+							_balancer.FixInsertion(ref rootNode, nodeToInsert);
+						}
 						return true;
 					}
-					currentNode = currentNode.Nodes["Left"];
+
+					if (currentNode.Right == default)
+					{
+						currentNode.Right = nodeToInsert;
+						nodeToInsert.Parent = parentNode;
+						if (CheckBalanceIsNeeded(currentNode, parentNode))
+						{
+							_balancer.FixInsertion(ref rootNode, nodeToInsert);
+						}
+						return true;
+					}
 				}
 				else
 				{
-					if (currentNode.Nodes["Right"] is null)
-					{
-						currentNode.Nodes["Right"] = nodeToInsert;
-						nodeToInsert.Nodes["Parent"] = currentNode;
-						return true;
-					}
-					currentNode = currentNode.Nodes["Right"];
+					currentNode.IsRed = false;
+					stack.Push(currentNode.Left);
+					stack.Push(currentNode.Right);
 				}
 			}
 
-			nodeToInsert.Nodes["Parent"] = parentNode;
+			return false;
+		}
 
-			if (nodeToInsert.Key.CompareTo(parentNode.Key) < 0)
-			{
-				parentNode.Nodes["Left"] = nodeToInsert;
-			}
-			else
-			{
-				parentNode.Nodes["Right"] = nodeToInsert;
-			}
-			return true;
+		private static bool CheckBalanceIsNeeded(RBBaseNode<TKey, TValue> currentNode, RBBaseNode<TKey, TValue> parentNode)
+		{
+			if (parentNode.IsRed && currentNode.IsRed) return true;
+			return false;
 		}
 
 		/// <summary>
 		/// Retrieves all key-value pairs in in-order traversal.
 		/// </summary>
-		public IEnumerable<KeyValuePair<TKey, TValue>> GetAll(RedBlackNode<TKey, TValue> rootNode)
+		public IEnumerable<KeyValuePair<TKey, TValue>> GetAll(RBBaseNode<TKey, TValue> rootNode)
 		{
 			ArgumentNullException.ThrowIfNull(rootNode);
 
-			if (rootNode is not null)
+			Stack<RBBaseNode<TKey, TValue>> stack = new();
+			stack.Push(rootNode);
+
+			while (stack.TryPop(out RBBaseNode<TKey, TValue> currentNode))
 			{
-				if (rootNode.Nodes["Left"] is not null)
+				if (currentNode.Left != default)
 				{
-					foreach (var item in GetAll(rootNode.Nodes["Left"]))
-					{
-						yield return item;
-					}
+					stack.Push(currentNode.Left);
 				}
-
-				yield return new KeyValuePair<TKey, TValue>(rootNode.Key, rootNode.Value);
-
-				if (rootNode.Nodes["Right"] is not null)
+				yield return new(currentNode.Key, currentNode.Value);
+				if (currentNode.Right != default)
 				{
-					foreach (var item in GetAll(rootNode.Nodes["Right"]))
-					{
-						yield return item;
-					}
+					stack.Push(currentNode.Right);
 				}
 			}
+
 		}
+
+		public void MapTree(RBBaseNode<TKey, TValue> rootNode)
+		{
+			ArgumentNullException.ThrowIfNull(rootNode);
+
+			Queue<RBBaseNode<TKey, TValue>> queue = new();
+			queue.Enqueue(rootNode);
+
+			while (queue.TryDequeue(out RBBaseNode<TKey, TValue> currentNode))
+			{
+				Console.WriteLine($"-------------------------");
+				if (!currentNode.Key.Equals(default)) Console.WriteLine($"Node:{currentNode.Key}");
+
+				if (currentNode.Value.Equals(default)) Console.WriteLine($"Has No Value!");
+				if (!currentNode.Value.Equals(default)) Console.WriteLine($"Value:{currentNode.Value}");
+
+				if (currentNode.IsRed) Console.WriteLine($"Is Red");
+				if (!currentNode.IsRed) Console.WriteLine($"Is Black");
+
+				if (currentNode.Parent == default) Console.WriteLine(value: $"Is the Root Node");
+				if (currentNode.Parent != default) Console.WriteLine(value: $"Parent Node:{currentNode.Parent.Key}");
+
+
+				if (currentNode.Left != default || currentNode.Right != default)
+				{
+					if (currentNode.Left != default)
+					{
+						if (!currentNode.Left.Key.Equals(default)) Console.WriteLine($"Left Child:{currentNode.Left.Key}");
+						queue.Enqueue(currentNode.Left);
+					}
+
+					if (currentNode.Right != default)
+					{
+						if (!currentNode.Right.Key.Equals(default)) Console.WriteLine($"Right Child:{currentNode.Right.Key}");
+						queue.Enqueue(currentNode.Right);
+					}
+				}
+				else
+				{
+					Console.WriteLine(value: $"Is a leaf node");
+				}
+
+			}
+
+		}
+
 
 		/// <summary>
 		/// Removes a Red-Black node from the tree.
@@ -139,16 +180,16 @@ namespace DataStructures.Traversers
 
 			if (key.CompareTo(currentNode.Key) < 0)
 			{
-				var node = currentNode.Nodes["Left"];
+				var node = currentNode.Left;
 				var result = Remove(node, key);
-				currentNode.Nodes["Left"] = node?.Nodes["Left"]; // Assign the updated left child to the parent node
+				currentNode.Left = node?.Left; // Assign the updated left child to the parent node
 				return result;
 			}
 			else if (key.CompareTo(currentNode.Key) > 0)
 			{
-				var node = currentNode.Nodes["Right"];
+				var node = currentNode.Right;
 				var result = Remove(node, key);
-				currentNode.Nodes["Right"] = node?.Nodes["Right"]; // Assign the updated right child to the parent node
+				currentNode.Right = node?.Right; // Assign the updated right child to the parent node
 				return result;
 			}
 			else
@@ -178,21 +219,19 @@ namespace DataStructures.Traversers
 		public TValue GetValue(RedBlackNode<TKey, TValue> rootNode, TKey key)
 		{
 			ArgumentNullException.ThrowIfNull(rootNode);
-			ConcurrentStack<RedBlackNode<TKey, TValue>> stack = new();
+			Stack<RedBlackNode<TKey, TValue>> stack = new();
 
 			stack.Push(rootNode);
 
-			while (!stack.IsEmpty)
+			while (stack.TryPop(out RedBlackNode<TKey, TValue> currentNode))
 			{
-				stack.TryPop(out RedBlackNode<TKey, TValue> currentNode);
-
 				if (currentNode.Key.Equals(key)) return currentNode.Value;
 
 				if (currentNode.Nodes != null)
 				{
-					if (currentNode.Nodes["Left"] != null) stack.Push(currentNode.Nodes["Left"]);
+					if (currentNode.Left != null) stack.Push(currentNode.Left);
 
-					if (currentNode.Nodes["Right"] != null) stack.Push(currentNode.Nodes["Right"]);
+					if (currentNode.Right != null) stack.Push(currentNode.Right);
 				}
 			}
 			throw new InvalidOperationException($"An attempt was made to return the Value of Key: {key} that failed to locate the Node holding the key.");
@@ -211,11 +250,11 @@ namespace DataStructures.Traversers
 				}
 				else
 				{
-					foreach (var item in Search(currentNode.Nodes["Left"], condition))
+					foreach (var item in Search(currentNode.Left, condition))
 					{
 						yield return item;
 					}
-					foreach (var item in Search(currentNode.Nodes["Right"], condition))
+					foreach (var item in Search(currentNode.Right, condition))
 					{
 						yield return item;
 					}

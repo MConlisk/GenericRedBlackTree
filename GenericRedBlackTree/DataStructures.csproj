@@ -36,18 +36,17 @@
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Balancers\Helpers\**" />
     <Compile Remove="Factories\**" />
     <Compile Remove="Original\**" />
+    <EmbeddedResource Remove="Balancers\Helpers\**" />
     <EmbeddedResource Remove="Factories\**" />
     <EmbeddedResource Remove="Original\**" />
+    <None Remove="Balancers\Helpers\**" />
     <None Remove="Factories\**" />
     <None Remove="Original\**" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Balancers\Helpers\FamilyHandling.cs" />
-    <Compile Remove="Balancers\Helpers\RedBlackBalancer.FamilyHandling.cs" />
-    <Compile Remove="Balancers\Helpers\RedBlackBalancer.RedBlackRotations.cs" />
-    <Compile Remove="Balancers\Helpers\Rotations.cs" />
     <Compile Remove="Interfaces\IComponent.cs" />
     <Compile Remove="Interfaces\INode.cs" />
   </ItemGroup>
@@ -81,8 +80,5 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Balancers\Helpers\" />
   </ItemGroup>
 </Project>
